@@ -61,6 +61,12 @@ public class NavigationController {
         new RequestBloodView();
     }
 
+    // Opens Become a Donor screen
+    public void openBeDonorView(JFrame currentFrame) {
+        if (currentFrame != null) currentFrame.dispose();
+        new BeDonorView();
+    }
+
     // Opens My Requests details screen
     public void openMyRequestView(JFrame currentFrame, BloodRequest request) {
         if (currentFrame != null) currentFrame.dispose();

@@ -5,9 +5,11 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 /**
- * DataStore singleton managing persistent data storage using local .txt files with full CRUD operations.
+ * DataStore singleton managing persistent data storage using local text files (Record.txt, users.txt, inventory.txt, requests.txt)
+ * following the file I/O structure of the reference project.
  */
 public class DataStore {
     private static DataStore instance;
@@ -16,22 +18,25 @@ public class DataStore {
     private static final String USERS_FILE = "data/users.txt";
     private static final String INVENTORY_FILE = "data/inventory.txt";
     private static final String REQUESTS_FILE = "data/requests.txt";
+    private static final String RECORD_FILE = "data/Record.txt";
 
     private List<User> users;
     private List<BloodInventory> inventories;
     private List<BloodRequest> requests;
+    private List<Donor> donors;
     private int nextRequestId = 1001;
 
     private DataStore() {
         users = new ArrayList<>();
         inventories = new ArrayList<>();
         requests = new ArrayList<>();
+        donors = new ArrayList<>();
         
         initDataFiles();
         loadDataFromFiles();
+        readDonorsFromFile();
     }
 
-    // Thread-safe singleton instance
     public static synchronized DataStore getInstance() {
         if (instance == null) {
             instance = new DataStore();
@@ -39,13 +44,13 @@ public class DataStore {
         return instance;
     }
 
-    // Initialize files and directories
     private void initDataFiles() {
         try {
             Files.createDirectories(Paths.get(DATA_DIR));
             File uFile = new File(USERS_FILE);
             File iFile = new File(INVENTORY_FILE);
             File rFile = new File(REQUESTS_FILE);
+            File recFile = new File(RECORD_FILE);
 
             if (!uFile.exists()) {
                 uFile.createNewFile();
@@ -57,6 +62,10 @@ public class DataStore {
             }
             if (!rFile.exists()) {
                 rFile.createNewFile();
+            }
+            if (!recFile.exists()) {
+                recFile.createNewFile();
+                seedDefaultDonors();
             }
         } catch (IOException e) {
             System.err.println("Error initializing data files: " + e.getMessage());
@@ -93,6 +102,12 @@ public class DataStore {
         for (BloodInventory item : defaults) {
             saveInventoryToFile(item);
         }
+    }
+
+    private void seedDefaultDonors() {
+        addDonor(new Donor("Kamal Hossain", "28", "Male", "kamal@gmail.com", "01711223344", "Dhanmondi", "B-"));
+        addDonor(new Donor("Rafiqul Islam", "32", "Male", "rafiq@gmail.com", "01822334455", "Mirpur", "A+"));
+        addDonor(new Donor("Nusrat Jahan", "25", "Female", "nusrat@gmail.com", "01933445566", "Banani", "O+"));
     }
 
     // Load data from files
@@ -152,7 +167,77 @@ public class DataStore {
         nextRequestId = maxId + 1;
     }
 
-    // Append user
+    // Read Donors from Record.txt using Scanner matching reference code style
+    public void readDonorsFromFile() {
+        donors.clear();
+        try {
+            File f = new File(RECORD_FILE);
+            if (!f.exists()) return;
+            Scanner s = new Scanner(f);
+            while (s.hasNextLine()) {
+                String name = s.nextLine();
+                if (!s.hasNextLine()) break;
+                String age = s.nextLine();
+                if (!s.hasNextLine()) break;
+                String sex = s.nextLine();
+                if (!s.hasNextLine()) break;
+                String email = s.nextLine();
+                if (!s.hasNextLine()) break;
+                String pn = s.nextLine();
+                if (!s.hasNextLine()) break;
+                String adr = s.nextLine();
+                if (!s.hasNextLine()) break;
+                String bg = s.nextLine();
+
+                donors.add(new Donor(name, age, sex, email, pn, adr, bg));
+            }
+            s.close();
+        } catch (Exception e) {
+            System.err.println("Error reading Record.txt: " + e.getMessage());
+        }
+    }
+
+    // Write Donors to Record.txt using FileWriter matching reference code style
+    public void writeDonorsToFile() {
+        try {
+            File f = new File(RECORD_FILE);
+            FileWriter fw = new FileWriter(f);
+            for (Donor d : donors) {
+                if (d != null) {
+                    fw.write(d.getName() + "\n");
+                    fw.write(d.getAge() + "\n");
+                    fw.write(d.getSex() + "\n");
+                    fw.write(d.getEmail() + "\n");
+                    fw.write(d.getPn() + "\n");
+                    fw.write(d.getAdr() + "\n");
+                    fw.write(d.getBg() + "\n");
+                }
+            }
+            fw.close();
+        } catch (Exception e) {
+            System.err.println("Error writing Record.txt: " + e.getMessage());
+        }
+    }
+
+    public synchronized void addDonor(Donor d) {
+        donors.add(d);
+        writeDonorsToFile();
+    }
+
+    public List<Donor> getDonors() {
+        return donors;
+    }
+
+    public synchronized boolean deleteDonor(int index) {
+        if (index >= 0 && index < donors.size()) {
+            donors.remove(index);
+            writeDonorsToFile();
+            return true;
+        }
+        return false;
+    }
+
+    // Save helpers
     private void saveUserToFile(User u) {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(USERS_FILE, true))) {
             bw.write(u.getFullName() + ";" + u.getEmail() + ";" + u.getPhone() + ";" + u.getBloodGroup() + ";" + u.getUsername() + ";" + u.getPassword() + ";" + u.getRole());
@@ -162,7 +247,6 @@ public class DataStore {
         }
     }
 
-    // Append inventory
     private void saveInventoryToFile(BloodInventory item) {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(INVENTORY_FILE, true))) {
             bw.write(item.getBloodGroup() + ";" + item.getLocation() + ";" + item.getHospitalName() + ";" + item.getDistanceKm() + ";" + item.getAvailableBags());
@@ -172,7 +256,6 @@ public class DataStore {
         }
     }
 
-    // Append request
     private void saveRequestToFile(BloodRequest req) {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(REQUESTS_FILE, true))) {
             bw.write(req.getRequestId() + ";" + req.getPatientName() + ";" + req.getBloodGroup() + ";" + req.getBloodBags() + ";" + req.getLocation() + ";" + req.getHospital() + ";" + req.getContactNo() + ";" + req.getStatus());
@@ -182,7 +265,6 @@ public class DataStore {
         }
     }
 
-    // Rewrite users.txt
     public synchronized void saveAllUsersToFiles() {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(USERS_FILE, false))) {
             for (User u : users) {
@@ -194,7 +276,6 @@ public class DataStore {
         }
     }
 
-    // Rewrite inventory.txt
     public synchronized void saveAllInventoryToFiles() {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(INVENTORY_FILE, false))) {
             for (BloodInventory item : inventories) {
@@ -206,7 +287,6 @@ public class DataStore {
         }
     }
 
-    // Rewrite requests.txt
     public synchronized void saveAllRequestsToFiles() {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(REQUESTS_FILE, false))) {
             for (BloodRequest req : requests) {
@@ -218,7 +298,6 @@ public class DataStore {
         }
     }
 
-    // CREATE & UPDATE Inventory
     public synchronized void addOrUpdateInventory(String bloodGroup, String location, String hospitalName, double distanceKm, int additionalBags) {
         boolean found = false;
         for (BloodInventory item : inventories) {
@@ -237,7 +316,6 @@ public class DataStore {
         saveAllInventoryToFiles();
     }
 
-    // DELETE Inventory Item
     public synchronized boolean deleteInventoryItem(int index) {
         if (index >= 0 && index < inventories.size()) {
             inventories.remove(index);
@@ -247,13 +325,11 @@ public class DataStore {
         return false;
     }
 
-    // UPDATE Request Status
     public synchronized boolean updateRequestStatus(String requestId, String newStatus) {
         for (BloodRequest req : requests) {
             if (req.getRequestId().equalsIgnoreCase(requestId)) {
                 req.setStatus(newStatus.toUpperCase());
                 
-                // Auto-deduct stock on approval/fulfillment
                 if ("FULFILLED".equalsIgnoreCase(newStatus) || "APPROVED".equalsIgnoreCase(newStatus)) {
                     for (BloodInventory item : inventories) {
                         if (item.getBloodGroup().equalsIgnoreCase(req.getBloodGroup()) &&
@@ -272,7 +348,6 @@ public class DataStore {
         return false;
     }
 
-    // DELETE Blood Request
     public synchronized boolean deleteBloodRequest(String requestId) {
         boolean removed = requests.removeIf(req -> req.getRequestId().equalsIgnoreCase(requestId));
         if (removed) {
@@ -281,7 +356,6 @@ public class DataStore {
         return removed;
     }
 
-    // UPDATE User Role
     public synchronized boolean updateUserRole(String username, String newRole) {
         for (User u : users) {
             if (u.getUsername().equalsIgnoreCase(username)) {
@@ -293,7 +367,6 @@ public class DataStore {
         return false;
     }
 
-    // DELETE User
     public synchronized boolean deleteUser(String username) {
         boolean removed = users.removeIf(u -> u.getUsername().equalsIgnoreCase(username));
         if (removed) {
@@ -302,7 +375,6 @@ public class DataStore {
         return removed;
     }
 
-    // User Operations
     public boolean addUser(User user) {
         for (User u : users) {
             if (u.getUsername().equalsIgnoreCase(user.getUsername())) {
