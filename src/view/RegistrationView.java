@@ -27,9 +27,10 @@ public class RegistrationView extends JFrame implements ActionListener {
     public RegistrationView() {
         authController = new AuthController();
 
-        // Main window configuration
+        // Standardized window properties
         setTitle("Register - Blood Bank Management System");
-        setSize(700, 720);
+        setSize(780, 740);
+        setMinimumSize(new Dimension(700, 640));
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         UITheme.applyWindowStyle(this);
@@ -42,7 +43,7 @@ public class RegistrationView extends JFrame implements ActionListener {
 
         JPanel card = UITheme.createCardPanel();
         card.setLayout(new GridBagLayout());
-        card.setPreferredSize(new Dimension(480, 560));
+        card.setPreferredSize(new Dimension(500, 580));
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(6, 8, 6, 8);

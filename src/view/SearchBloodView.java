@@ -29,9 +29,10 @@ public class SearchBloodView extends JFrame implements ActionListener {
     public SearchBloodView() {
         searchController = new SearchController();
 
-        // Main frame properties
+        // Standardized main dashboard properties
         setTitle("Search Available Blood - Blood Bank System");
-        setSize(980, 700);
+        setSize(1020, 720);
+        setMinimumSize(new Dimension(900, 650));
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         UITheme.applyWindowStyle(this);

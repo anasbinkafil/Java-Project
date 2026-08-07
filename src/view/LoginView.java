@@ -25,9 +25,10 @@ public class LoginView extends JFrame implements ActionListener {
     public LoginView() {
         authController = new AuthController();
 
-        // Frame setup
+        // Standardized window properties
         setTitle("Login - Blood Bank Management System");
-        setSize(700, 600);
+        setSize(780, 640);
+        setMinimumSize(new Dimension(700, 580));
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         UITheme.applyWindowStyle(this);
@@ -40,7 +41,7 @@ public class LoginView extends JFrame implements ActionListener {
 
         JPanel card = UITheme.createCardPanel();
         card.setLayout(new GridBagLayout());
-        card.setPreferredSize(new Dimension(450, 440));
+        card.setPreferredSize(new Dimension(460, 440));
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(6, 8, 6, 8);
