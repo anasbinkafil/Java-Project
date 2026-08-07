@@ -6,7 +6,7 @@ import model.DataStore;
 import java.util.List;
 
 /**
- * Controller handling blood inventory search and formatting.
+ * Controller handling blood inventory search queries.
  */
 public class SearchController {
     private DataStore dataStore;
@@ -15,35 +15,27 @@ public class SearchController {
         this.dataStore = DataStore.getInstance();
     }
 
-    // Queries inventory records based on blood group & location filters
+    // Returns matching inventory items for search filtering
+    public List<BloodInventory> getMatchingInventory(String bloodGroup, String location) {
+        String bg = (bloodGroup == null || bloodGroup.startsWith("Select")) ? "" : bloodGroup.trim();
+        String loc = (location == null || location.startsWith("Select")) ? "" : location.trim();
+        return dataStore.searchInventory(bg, loc);
+    }
+
+    // Formatted query summary text
     public String searchBlood(String bloodGroup, String location) {
-        if (bloodGroup == null || location == null) {
-            return "Please select valid search parameters.";
-        }
-
-        List<BloodInventory> results = dataStore.searchInventory(bloodGroup, location);
+        List<BloodInventory> results = getMatchingInventory(bloodGroup, location);
         if (results.isEmpty()) {
-            return "No matching blood inventory found for:\n" +
-                   "Blood Group: " + bloodGroup + "\n" +
-                   "Location: " + location + "\n\n" +
-                   "Tip: You can submit a Blood Request directly!";
+            return "No matching blood inventory found.";
         }
 
-        // Format inventory results
         StringBuilder builder = new StringBuilder();
-        builder.append("=== SEARCH RESULTS (").append(results.size()).append(" Found) ===\n\n");
-
-        for (int i = 0; i < results.size(); i++) {
-            BloodInventory item = results.get(i);
-            builder.append("Result #").append(i + 1).append(":\n");
-            builder.append("  - Blood Group: ").append(item.getBloodGroup()).append("\n");
-            builder.append("  - Location: ").append(item.getLocation()).append("\n");
-            builder.append("  - Nearest Hospital: ").append(item.getHospitalName()).append("\n");
-            builder.append("  - Distance: ").append(item.getDistanceKm()).append(" KM\n");
-            builder.append("  - Available Blood Bags: ").append(item.getAvailableBags()).append("\n");
-            builder.append("--------------------------------------------------\n");
+        for (BloodInventory item : results) {
+            builder.append(item.getHospitalName())
+                   .append(" (").append(item.getLocation()).append(") - ")
+                   .append(item.getBloodGroup()).append(": ")
+                   .append(item.getAvailableBags()).append(" Bags available\n");
         }
-
         return builder.toString();
     }
 }
