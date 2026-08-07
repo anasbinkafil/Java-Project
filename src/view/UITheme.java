@@ -58,10 +58,6 @@ public class UITheme {
         JPanel brandPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 0));
         brandPanel.setOpaque(false);
 
-        JLabel logoIcon = new JLabel("🩸");
-        logoIcon.setFont(new Font("Segoe UI", Font.PLAIN, 18));
-        brandPanel.add(logoIcon);
-
         JLabel logo = new JLabel("BBMS");
         logo.setFont(new Font("Segoe UI", Font.BOLD, 18));
         logo.setForeground(PRIMARY_RED);
@@ -112,7 +108,7 @@ public class UITheme {
         rightSection.setOpaque(false);
 
         if (currentUser != null) {
-            JLabel userLabel = new JLabel("👤 " + currentUser.getFullName() + (isAdmin ? " (Admin)" : ""));
+            JLabel userLabel = new JLabel(currentUser.getFullName() + (isAdmin ? " (Admin)" : ""));
             userLabel.setFont(new Font("Segoe UI", Font.BOLD, 12));
             userLabel.setForeground(TEXT_DARK);
             rightSection.add(userLabel);
@@ -154,7 +150,7 @@ public class UITheme {
                 new EmptyBorder(15, 32, 15, 32)
         ));
 
-        JLabel brand = new JLabel("🩸 BBMS Clinical Donor Network");
+        JLabel brand = new JLabel("BBMS Clinical Donor Network");
         brand.setFont(new Font("Segoe UI", Font.BOLD, 13));
         brand.setForeground(PRIMARY_RED);
         footer.add(brand, BorderLayout.WEST);
@@ -244,7 +240,7 @@ public class UITheme {
                 label.setOpaque(true);
                 label.setBackground(BADGE_BLUE_BG);
                 label.setForeground(BADGE_BLUE_TEXT);
-            } else if (valStr.contains("🟢") || valStr.equalsIgnoreCase("FULFILLED") || valStr.equalsIgnoreCase("APPROVED")) {
+            } else if (valStr.contains("Bags") || valStr.equalsIgnoreCase("FULFILLED") || valStr.equalsIgnoreCase("APPROVED")) {
                 label.setOpaque(true);
                 label.setBackground(BADGE_GREEN_BG);
                 label.setForeground(BADGE_GREEN_TEXT);

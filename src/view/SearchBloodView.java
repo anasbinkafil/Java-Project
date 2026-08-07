@@ -1,7 +1,8 @@
 package view;
 
 import controller.NavigationController;
-import controller.SearchController;
+import model.BloodInventory;
+import model.DataStore;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -11,6 +12,7 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 
 /**
  * Main dashboard screen for searching available blood stocks across hospitals.
@@ -21,14 +23,10 @@ public class SearchBloodView extends JFrame implements ActionListener {
     private DefaultTableModel tableModel;
     private JButton searchButton, requestButton;
 
-    private SearchController searchController;
-
     private String[] bloodGroups = {"Select Group", "A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"};
     private String[] locations = {"Select Location", "DHANMONDI", "PURAN DHAKA", "MIRPUR", "SAVAR", "BANANI"};
 
     public SearchBloodView() {
-        searchController = new SearchController();
-
         // Standardized main dashboard properties
         setTitle("Search Available Blood - Blood Bank System");
         setSize(1020, 720);
@@ -103,7 +101,7 @@ public class SearchBloodView extends JFrame implements ActionListener {
         btnGroup.setOpaque(false);
         btnGroup.add(new JLabel(" "), BorderLayout.NORTH);
 
-        searchButton = new JButton("🔍  Search");
+        searchButton = new JButton("Search");
         UITheme.stylePrimaryButton(searchButton);
         searchButton.setPreferredSize(new Dimension(130, 38));
         searchButton.addActionListener(this);
@@ -157,8 +155,9 @@ public class SearchBloodView extends JFrame implements ActionListener {
         sidebarCard.setLayout(new BoxLayout(sidebarCard, BoxLayout.Y_AXIS));
         sidebarCard.setPreferredSize(new Dimension(240, 280));
 
-        JLabel iconLabel = new JLabel("🚨", SwingConstants.CENTER);
-        iconLabel.setFont(new Font("Segoe UI", Font.PLAIN, 28));
+        JLabel iconLabel = new JLabel("Direct Request", SwingConstants.CENTER);
+        iconLabel.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        iconLabel.setForeground(UITheme.PRIMARY_RED);
         iconLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         sidebarCard.add(iconLabel);
 
@@ -200,14 +199,23 @@ public class SearchBloodView extends JFrame implements ActionListener {
         setVisible(true);
     }
 
-    // Loads inventory rows into table
+    // Loads inventory rows cleanly into table columns
     private void loadInventoryData(String bloodGroup, String location) {
         tableModel.setRowCount(0);
-        tableModel.addRow(new Object[]{"🏥  Square Hospital", "Dhanmondi", "B-", "🟢  5 Bags", "1.2 KM"});
-        tableModel.addRow(new Object[]{"🏥  Labaid Specialized", "Dhanmondi", "B-", "🟡  2 Bags", "2.5 KM"});
-        tableModel.addRow(new Object[]{"🩸  Quantum Blood Lab", "Banani", "B-", "🟢  12 Bags", "6.8 KM"});
-        tableModel.addRow(new Object[]{"🏥  Evercare Hospital", "Mirpur", "A+", "🟢  8 Bags", "4.1 KM"});
-        tableModel.addRow(new Object[]{"🏥  United Hospital", "Puran Dhaka", "O+", "🟢  15 Bags", "3.0 KM"});
+        List<BloodInventory> results = DataStore.getInstance().searchInventory(bloodGroup, location);
+        if (!results.isEmpty()) {
+            for (BloodInventory item : results) {
+                tableModel.addRow(new Object[]{
+                    item.getHospitalName(),
+                    item.getLocation(),
+                    item.getBloodGroup(),
+                    item.getAvailableBags() + " Bags",
+                    item.getDistanceKm() + " KM"
+                });
+            }
+        } else {
+            tableModel.addRow(new Object[]{"No stock found", "-", "-", "0 Bags", "-"});
+        }
     }
 
     @Override
@@ -218,19 +226,7 @@ public class SearchBloodView extends JFrame implements ActionListener {
             String location = (String) locationCombo.getSelectedItem();
             if (locationCombo.getSelectedIndex() == 0) location = "";
 
-            // Query inventory via SearchController
-            String resultText = searchController.searchBlood(blood, location);
-            tableModel.setRowCount(0);
-            if (resultText != null && !resultText.isEmpty()) {
-                String[] lines = resultText.split("\n");
-                for (String line : lines) {
-                    if (!line.trim().isEmpty()) {
-                        tableModel.addRow(new Object[]{line, location.isEmpty() ? "Dhaka" : location, blood.isEmpty() ? "All" : blood, "🟢 Available", "Near"});
-                    }
-                }
-            } else {
-                tableModel.addRow(new Object[]{"No stock found", "-", "-", "0 Bags", "-"});
-            }
+            loadInventoryData(blood, location);
         } else if (e.getSource() == requestButton) {
             NavigationController.getInstance().openRequestBloodView(this);
         }
