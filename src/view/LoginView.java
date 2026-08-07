@@ -9,105 +9,123 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class LoginView extends JFrame implements ActionListener {
     private JTextField userField;
     private JPasswordField passField;
-    private JButton loginButton, backButton;
+    private JButton loginButton;
+    private JLabel registerLink, backLink;
     private AuthController authController;
 
     public LoginView() {
         authController = new AuthController();
 
-        setTitle("User Login - Blood Bank System");
-        setSize(650, 480);
+        setTitle("Login - Blood Bank Management System");
+        setSize(700, 600);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         UITheme.applyWindowStyle(this);
         setLayout(new BorderLayout());
 
-        // Header
-        JPanel headerPanel = UITheme.createHeaderPanel(
-                "USER AUTHENTICATION",
-                "Sign in to access search inventory and donor options"
-        );
-        add(headerPanel, BorderLayout.NORTH);
-
-        // Center Content Card
+        // Center Content Card Wrapper
         JPanel centerWrapper = new JPanel(new GridBagLayout());
         centerWrapper.setOpaque(false);
+        centerWrapper.setBorder(new EmptyBorder(25, 25, 25, 25));
 
         JPanel card = UITheme.createCardPanel();
         card.setLayout(new GridBagLayout());
+        card.setPreferredSize(new Dimension(450, 440));
+
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(8, 12, 8, 12);
+        gbc.insets = new Insets(6, 8, 6, 8);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        // Form Title
-        JLabel formTitle = new JLabel("Blood Bank Account Login", SwingConstants.CENTER);
-        formTitle.setFont(UITheme.FONT_TITLE);
-        formTitle.setForeground(UITheme.TEXT_MAIN);
+        // Back Link
+        backLink = new JLabel("←  BACK TO WELCOME");
+        backLink.setFont(new Font("Segoe UI", Font.BOLD, 11));
+        backLink.setForeground(UITheme.TEXT_MUTED);
+        backLink.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        backLink.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                NavigationController.getInstance().openWelcomeView(LoginView.this);
+            }
+        });
         gbc.gridx = 0; gbc.gridy = 0; gbc.gridwidth = 2;
-        gbc.insets = new Insets(5, 10, 15, 10);
-        card.add(formTitle, gbc);
+        gbc.insets = new Insets(0, 5, 12, 5);
+        card.add(backLink, gbc);
 
-        gbc.insets = new Insets(8, 10, 8, 10);
-        gbc.gridwidth = 1;
+        // Title
+        JLabel titleLabel = new JLabel("Sign In to BBMS", SwingConstants.CENTER);
+        titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 22));
+        titleLabel.setForeground(UITheme.TEXT_DARK);
+        gbc.gridy = 1;
+        gbc.insets = new Insets(0, 5, 4, 5);
+        card.add(titleLabel, gbc);
+
+        // Subtitle
+        JLabel subLabel = new JLabel("Enter your credentials to access inventory & requests.", SwingConstants.CENTER);
+        subLabel.setFont(UITheme.FONT_SUBTITLE);
+        subLabel.setForeground(UITheme.TEXT_MUTED);
+        gbc.gridy = 2;
+        gbc.insets = new Insets(0, 5, 18, 5);
+        card.add(subLabel, gbc);
+
+        gbc.insets = new Insets(6, 5, 6, 5);
 
         // Username
         JLabel userLabel = new JLabel("Username");
         UITheme.styleLabel(userLabel);
-        gbc.gridx = 0; gbc.gridy = 1;
+        gbc.gridx = 0; gbc.gridy = 3; gbc.gridwidth = 2;
         card.add(userLabel, gbc);
 
-        userField = new JTextField(18);
+        userField = new JTextField();
         UITheme.styleTextField(userField);
-        gbc.gridx = 1; gbc.gridy = 1;
+        gbc.gridy = 4;
         card.add(userField, gbc);
 
         // Password
         JLabel passLabel = new JLabel("Password");
         UITheme.styleLabel(passLabel);
-        gbc.gridx = 0; gbc.gridy = 2;
+        gbc.gridy = 5;
         card.add(passLabel, gbc);
 
-        passField = new JPasswordField(18);
+        passField = new JPasswordField();
         UITheme.styleTextField(passField);
-        gbc.gridx = 1; gbc.gridy = 2;
+        gbc.gridy = 6;
         card.add(passField, gbc);
 
-        // Buttons
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 10));
-        buttonPanel.setOpaque(false);
-
+        // Login Button
         loginButton = new JButton("Login");
         UITheme.stylePrimaryButton(loginButton);
-        loginButton.setPreferredSize(new Dimension(120, 38));
+        loginButton.setPreferredSize(new Dimension(360, 42));
         loginButton.addActionListener(this);
-        buttonPanel.add(loginButton);
+        gbc.gridy = 7;
+        gbc.insets = new Insets(18, 5, 10, 5);
+        card.add(loginButton, gbc);
 
-        backButton = new JButton("Back");
-        UITheme.styleOutlineButton(backButton);
-        backButton.setPreferredSize(new Dimension(100, 38));
-        backButton.addActionListener(this);
-        buttonPanel.add(backButton);
-
-        gbc.gridx = 0; gbc.gridy = 3; gbc.gridwidth = 2;
-        gbc.insets = new Insets(15, 10, 5, 10);
-        card.add(buttonPanel, gbc);
+        // Register Link
+        registerLink = new JLabel("Need an account? Register Now", SwingConstants.CENTER);
+        registerLink.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        registerLink.setForeground(UITheme.TEXT_MUTED);
+        registerLink.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        registerLink.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                NavigationController.getInstance().openRegistrationView(LoginView.this);
+            }
+        });
+        gbc.gridy = 8;
+        gbc.insets = new Insets(4, 5, 5, 5);
+        card.add(registerLink, gbc);
 
         centerWrapper.add(card);
         add(centerWrapper, BorderLayout.CENTER);
 
         // Footer
-        JPanel footer = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        footer.setBackground(UITheme.WINDOW_BG);
-        footer.setBorder(new EmptyBorder(10, 10, 15, 10));
-        JLabel footerLabel = new JLabel("© 2026 Clinical Integrity BBMS");
-        footerLabel.setFont(new Font("Segoe UI", Font.PLAIN, 11));
-        footerLabel.setForeground(UITheme.TEXT_MUTED);
-        footer.add(footerLabel);
-        add(footer, BorderLayout.SOUTH);
+        add(UITheme.createFooter(), BorderLayout.SOUTH);
 
         setVisible(true);
     }
@@ -125,8 +143,6 @@ public class LoginView extends JFrame implements ActionListener {
             } else {
                 JOptionPane.showMessageDialog(this, "Invalid Username or Password!", "Authentication Error", JOptionPane.ERROR_MESSAGE);
             }
-        } else if (e.getSource() == backButton) {
-            NavigationController.getInstance().openWelcomeView(this);
         }
     }
 }

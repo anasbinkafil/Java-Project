@@ -15,37 +15,33 @@ public class MyRequestView extends JFrame implements ActionListener {
     private JButton backButton;
 
     public MyRequestView(BloodRequest request) {
-        setTitle("My Blood Requests - Blood Bank System");
-        setSize(720, 580);
+        setTitle("My Requests - Blood Bank Management System");
+        setSize(780, 680);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         UITheme.applyWindowStyle(this);
         setLayout(new BorderLayout());
 
-        // Header
-        JPanel headerPanel = UITheme.createHeaderPanel(
-                "MY BLOOD REQUEST DETAILS",
-                "Clinical confirmation and urgent status tracking"
-        );
-        add(headerPanel, BorderLayout.NORTH);
+        // Top Navigation Bar
+        add(UITheme.createTopNavBar(this, "My Requests"), BorderLayout.NORTH);
 
-        // Main Panel Card
-        JPanel mainWrapper = new JPanel(new GridBagLayout());
-        mainWrapper.setOpaque(false);
-        mainWrapper.setBorder(new EmptyBorder(15, 20, 15, 20));
+        // Center Content Card Wrapper
+        JPanel centerWrapper = new JPanel(new GridBagLayout());
+        centerWrapper.setOpaque(false);
+        centerWrapper.setBorder(new EmptyBorder(25, 25, 25, 25));
 
         JPanel card = UITheme.createCardPanel();
         card.setLayout(new BorderLayout(15, 15));
-        card.setPreferredSize(new Dimension(620, 380));
+        card.setPreferredSize(new Dimension(620, 420));
 
-        JLabel cardTitle = new JLabel("Submitted Request Summary", SwingConstants.CENTER);
-        cardTitle.setFont(UITheme.FONT_TITLE);
-        cardTitle.setForeground(UITheme.TEXT_MAIN);
-        card.add(cardTitle, BorderLayout.NORTH);
+        JLabel titleLabel = new JLabel("Submitted Blood Request Details", SwingConstants.CENTER);
+        titleLabel.setFont(UITheme.FONT_TITLE);
+        titleLabel.setForeground(UITheme.TEXT_DARK);
+        card.add(titleLabel, BorderLayout.NORTH);
 
         requestArea = new JTextArea();
         requestArea.setFont(new Font("Consolas", Font.PLAIN, 13));
-        requestArea.setForeground(UITheme.TEXT_MAIN);
+        requestArea.setForeground(UITheme.TEXT_DARK);
         requestArea.setBackground(new Color(250, 252, 255));
         requestArea.setMargin(new Insets(15, 15, 15, 15));
         requestArea.setEditable(false);
@@ -53,7 +49,7 @@ public class MyRequestView extends JFrame implements ActionListener {
         if (request != null) {
             requestArea.setText(
                     "===========================================================\n" +
-                    "                 CLINICAL BLOOD REQUEST DETAILS           \n" +
+                    "                 BLOOD REQUEST CONFIRMATION                \n" +
                     "===========================================================\n\n" +
                     "  Request ID   : " + request.getRequestId() + "\n" +
                     "  Patient Name : " + request.getPatientName() + "\n" +
@@ -66,11 +62,11 @@ public class MyRequestView extends JFrame implements ActionListener {
                     "==========================================================="
             );
         } else {
-            requestArea.setText("No active blood requests found.");
+            requestArea.setText("No recent blood request submitted in this session.");
         }
 
         JScrollPane scrollPane = new JScrollPane(requestArea);
-        scrollPane.setBorder(new LineBorder(UITheme.BORDER_COLOR, 1, true));
+        scrollPane.setBorder(new LineBorder(UITheme.CARD_BORDER, 1, true));
         card.add(scrollPane, BorderLayout.CENTER);
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
@@ -84,18 +80,11 @@ public class MyRequestView extends JFrame implements ActionListener {
 
         card.add(buttonPanel, BorderLayout.SOUTH);
 
-        mainWrapper.add(card);
-        add(mainWrapper, BorderLayout.CENTER);
+        centerWrapper.add(card);
+        add(centerWrapper, BorderLayout.CENTER);
 
         // Footer
-        JPanel footer = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        footer.setBackground(UITheme.WINDOW_BG);
-        footer.setBorder(new EmptyBorder(5, 10, 10, 10));
-        JLabel footerLabel = new JLabel("© 2026 Clinical Integrity BBMS");
-        footerLabel.setFont(new Font("Segoe UI", Font.PLAIN, 11));
-        footerLabel.setForeground(UITheme.TEXT_MUTED);
-        footer.add(footerLabel);
-        add(footer, BorderLayout.SOUTH);
+        add(UITheme.createFooter(), BorderLayout.SOUTH);
 
         setVisible(true);
     }

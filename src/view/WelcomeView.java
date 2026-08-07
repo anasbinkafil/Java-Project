@@ -13,40 +13,42 @@ public class WelcomeView extends JFrame implements ActionListener {
 
     public WelcomeView() {
         setTitle("Blood Bank Management System");
-        setSize(680, 480);
+        setSize(720, 600);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         UITheme.applyWindowStyle(this);
         setLayout(new BorderLayout());
 
-        // Header
-        JPanel headerPanel = UITheme.createHeaderPanel(
-                "BLOOD BANK MANAGEMENT SYSTEM",
-                "Clinical Integrity & Lifesaving Donor Network"
-        );
-        add(headerPanel, BorderLayout.NORTH);
-
-        // Center Content Card
+        // Center Content Card Wrapper
         JPanel centerWrapper = new JPanel(new GridBagLayout());
         centerWrapper.setOpaque(false);
+        centerWrapper.setBorder(new EmptyBorder(25, 25, 25, 25));
 
         JPanel card = UITheme.createCardPanel();
         card.setLayout(new GridBagLayout());
+        card.setPreferredSize(new Dimension(500, 380));
+
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 15, 10, 15);
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.gridx = 0;
 
-        JLabel welcomeLabel = new JLabel("Welcome to Blood Bank System", SwingConstants.CENTER);
-        welcomeLabel.setFont(UITheme.FONT_TITLE);
-        welcomeLabel.setForeground(UITheme.TEXT_MAIN);
+        JLabel logoLabel = new JLabel("BBMS", SwingConstants.CENTER);
+        logoLabel.setFont(new Font("Segoe UI", Font.BOLD, 28));
+        logoLabel.setForeground(UITheme.PRIMARY_RED);
         gbc.gridy = 0;
+        card.add(logoLabel, gbc);
+
+        JLabel welcomeLabel = new JLabel("Welcome to Blood Bank System", SwingConstants.CENTER);
+        welcomeLabel.setFont(new Font("Segoe UI", Font.BOLD, 20));
+        welcomeLabel.setForeground(UITheme.TEXT_DARK);
+        gbc.gridy = 1;
         card.add(welcomeLabel, gbc);
 
-        JLabel infoLabel = new JLabel("Please Login or Register to search blood inventory or submit urgent requests.", SwingConstants.CENTER);
+        JLabel infoLabel = new JLabel("<html><center>Join the verified hospital network to manage and request life-saving blood resources.</center></html>", SwingConstants.CENTER);
         infoLabel.setFont(UITheme.FONT_SUBTITLE);
         infoLabel.setForeground(UITheme.TEXT_MUTED);
-        gbc.gridy = 1;
+        gbc.gridy = 2;
         card.add(infoLabel, gbc);
 
         // Buttons Panel
@@ -55,17 +57,17 @@ public class WelcomeView extends JFrame implements ActionListener {
 
         loginButton = new JButton("Login to Account");
         UITheme.stylePrimaryButton(loginButton);
-        loginButton.setPreferredSize(new Dimension(170, 40));
+        loginButton.setPreferredSize(new Dimension(170, 42));
         loginButton.addActionListener(this);
         buttonPanel.add(loginButton);
 
         registerButton = new JButton("Register New User");
-        UITheme.styleSecondaryButton(registerButton);
-        registerButton.setPreferredSize(new Dimension(170, 40));
+        UITheme.styleOutlineButton(registerButton);
+        registerButton.setPreferredSize(new Dimension(170, 42));
         registerButton.addActionListener(this);
         buttonPanel.add(registerButton);
 
-        gbc.gridy = 2;
+        gbc.gridy = 3;
         gbc.insets = new Insets(20, 15, 5, 15);
         card.add(buttonPanel, gbc);
 
@@ -73,14 +75,7 @@ public class WelcomeView extends JFrame implements ActionListener {
         add(centerWrapper, BorderLayout.CENTER);
 
         // Footer
-        JPanel footer = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        footer.setBackground(UITheme.WINDOW_BG);
-        footer.setBorder(new EmptyBorder(10, 10, 15, 10));
-        JLabel footerLabel = new JLabel("© 2026 Clinical Integrity BBMS • Hospital & Donor Network");
-        footerLabel.setFont(new Font("Segoe UI", Font.PLAIN, 11));
-        footerLabel.setForeground(UITheme.TEXT_MUTED);
-        footer.add(footerLabel);
-        add(footer, BorderLayout.SOUTH);
+        add(UITheme.createFooter(), BorderLayout.SOUTH);
 
         setVisible(true);
     }
