@@ -12,38 +12,39 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 /**
- * Registration view for creating new donor/user accounts.
+ * Registration view for creating Patient, Donor, or Admin accounts.
  */
 public class RegistrationView extends JFrame implements ActionListener {
     private JTextField nameField, emailField, phoneField, userField;
-    private JComboBox<String> bloodCombo;
+    private JComboBox<String> bloodCombo, roleCombo;
     private JPasswordField passField;
     private JButton registerButton;
     private JLabel loginLink, backLink;
 
     private AuthController authController;
     private String[] bloodGroups = {"Select Group", "A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"};
+    private String[] roles = {"Patient / Regular User", "Blood Donor", "Admin / Hospital Staff"};
 
     public RegistrationView() {
         authController = new AuthController();
 
-        // Standardized window properties
-        setTitle("Register - Blood Bank Management System");
-        setSize(780, 740);
-        setMinimumSize(new Dimension(700, 640));
+        // Window configuration
+        setTitle("Register Account - Blood Bank System");
+        setSize(780, 760);
+        setMinimumSize(new Dimension(700, 650));
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         UITheme.applyWindowStyle(this);
         setLayout(new BorderLayout());
 
-        // Center card layout
+        // Center card wrapper
         JPanel centerWrapper = new JPanel(new GridBagLayout());
         centerWrapper.setOpaque(false);
         centerWrapper.setBorder(new EmptyBorder(20, 20, 20, 20));
 
         JPanel card = UITheme.createCardPanel();
         card.setLayout(new GridBagLayout());
-        card.setPreferredSize(new Dimension(500, 580));
+        card.setPreferredSize(new Dimension(520, 620));
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(6, 8, 6, 8);
@@ -72,7 +73,7 @@ public class RegistrationView extends JFrame implements ActionListener {
         gbc.insets = new Insets(0, 5, 4, 5);
         card.add(titleLabel, gbc);
 
-        JLabel subLabel = new JLabel("Join the network to manage and request life-saving resources.", SwingConstants.CENTER);
+        JLabel subLabel = new JLabel("Register as Patient, Donor, or Hospital Management Staff.", SwingConstants.CENTER);
         subLabel.setFont(UITheme.FONT_SUBTITLE);
         subLabel.setForeground(UITheme.TEXT_MUTED);
         gbc.gridy = 2;
@@ -132,22 +133,32 @@ public class RegistrationView extends JFrame implements ActionListener {
         gbc.gridx = 1; gbc.gridy = 8;
         card.add(bloodCombo, gbc);
 
+        JLabel roleLabel = new JLabel("Account Type / Role");
+        UITheme.styleLabel(roleLabel);
+        gbc.gridx = 0; gbc.gridy = 9; gbc.gridwidth = 2;
+        card.add(roleLabel, gbc);
+
+        roleCombo = new JComboBox<>(roles);
+        UITheme.styleComboBox(roleCombo);
+        gbc.gridy = 10;
+        card.add(roleCombo, gbc);
+
         JLabel passLabel = new JLabel("Password");
         UITheme.styleLabel(passLabel);
-        gbc.gridx = 0; gbc.gridy = 9; gbc.gridwidth = 2;
+        gbc.gridy = 11;
         card.add(passLabel, gbc);
 
         passField = new JPasswordField();
         UITheme.styleTextField(passField);
-        gbc.gridy = 10;
+        gbc.gridy = 12;
         card.add(passField, gbc);
 
-        // Primary action button
-        registerButton = new JButton("Register Now");
+        // Submit action button
+        registerButton = new JButton("Register Account");
         UITheme.stylePrimaryButton(registerButton);
         registerButton.setPreferredSize(new Dimension(380, 42));
         registerButton.addActionListener(this);
-        gbc.gridy = 11;
+        gbc.gridy = 13;
         gbc.insets = new Insets(18, 5, 10, 5);
         card.add(registerButton, gbc);
 
@@ -162,7 +173,7 @@ public class RegistrationView extends JFrame implements ActionListener {
                 NavigationController.getInstance().openLoginView(RegistrationView.this);
             }
         });
-        gbc.gridy = 12;
+        gbc.gridy = 14;
         gbc.insets = new Insets(4, 5, 5, 5);
         card.add(loginLink, gbc);
 
@@ -184,14 +195,17 @@ public class RegistrationView extends JFrame implements ActionListener {
             if (bloodCombo.getSelectedIndex() == 0) blood = "";
             String username = userField.getText();
             String password = new String(passField.getPassword());
+            
+            int selRole = roleCombo.getSelectedIndex();
+            String role = (selRole == 1) ? "DONOR" : (selRole == 2) ? "ADMIN" : "PATIENT";
 
             // Process registration via controller
-            String errorMsg = authController.registerUser(name, email, phone, blood, username, password);
+            String errorMsg = authController.registerUser(name, email, phone, blood, username, password, role);
 
             if (errorMsg != null) {
                 JOptionPane.showMessageDialog(this, errorMsg, "Registration Error", JOptionPane.ERROR_MESSAGE);
             } else {
-                JOptionPane.showMessageDialog(this, "Registration Successful!");
+                JOptionPane.showMessageDialog(this, "Registration Successful! Account Role: " + role);
                 NavigationController.getInstance().openSearchBloodView(this);
             }
         }

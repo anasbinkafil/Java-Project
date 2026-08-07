@@ -4,7 +4,7 @@ import model.DataStore;
 import model.User;
 
 /**
- * Controller handling user registration and login validation.
+ * Controller handling user registration and login validation across roles.
  */
 public class AuthController {
     private DataStore dataStore;
@@ -13,8 +13,12 @@ public class AuthController {
         this.dataStore = DataStore.getInstance();
     }
 
-    // Validates inputs and registers new user account
     public String registerUser(String fullName, String email, String phone, String bloodGroup, String username, String password) {
+        return registerUser(fullName, email, phone, bloodGroup, username, password, "PATIENT");
+    }
+
+    // Validates inputs and registers new user with role
+    public String registerUser(String fullName, String email, String phone, String bloodGroup, String username, String password, String role) {
         if (fullName == null || fullName.trim().isEmpty()) {
             return "Full Name cannot be empty.";
         }
@@ -34,7 +38,7 @@ public class AuthController {
             return "Password must be at least 4 characters long.";
         }
 
-        User newUser = new User(fullName.trim(), email.trim(), phone.trim(), bloodGroup.trim(), username.trim(), password);
+        User newUser = new User(fullName.trim(), email.trim(), phone.trim(), bloodGroup.trim(), username.trim(), password, role);
         boolean success = dataStore.addUser(newUser);
 
         if (!success) {
@@ -42,10 +46,10 @@ public class AuthController {
         }
 
         NavigationController.getInstance().setCurrentUser(newUser);
-        return null; // Return null on successful registration
+        return null;
     }
 
-    // Authenticates credentials against DataStore
+    // Authenticates credentials
     public User loginUser(String username, String password) {
         if (username == null || username.trim().isEmpty() || password == null || password.isEmpty()) {
             return null;

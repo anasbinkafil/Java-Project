@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * DataStore singleton managing persistent data storage using local .txt files.
+ * DataStore singleton managing persistent data storage using local .txt files with full CRUD operations.
  */
 public class DataStore {
     private static DataStore instance;
@@ -39,7 +39,7 @@ public class DataStore {
         return instance;
     }
 
-    // Create data folder and files if missing
+    // Initialize files and directories
     private void initDataFiles() {
         try {
             Files.createDirectories(Paths.get(DATA_DIR));
@@ -63,12 +63,11 @@ public class DataStore {
         }
     }
 
-    // Seed initial users into text file
     private void seedDefaultUsers() {
-        saveUserToFile(new User("Demo User", "demo@bloodbank.org", "01700000000", "A+", "admin", "1234", "ADMIN"));
+        saveUserToFile(new User("System Admin", "admin@bloodbank.org", "01700000000", "O+", "admin", "1234", "ADMIN"));
+        saveUserToFile(new User("John Donor", "john@donor.org", "01800000000", "A+", "donor1", "1234", "DONOR"));
     }
 
-    // Seed default inventory records into text file
     private void seedDefaultInventory() {
         List<BloodInventory> defaults = new ArrayList<>();
         defaults.add(new BloodInventory("A+", "DHANMONDI", "SQUARE HOSPITAL", 1.5, 22));
@@ -96,7 +95,7 @@ public class DataStore {
         }
     }
 
-    // Load data from text files into memory
+    // Load data from files
     private void loadDataFromFiles() {
         users.clear();
         inventories.clear();
@@ -109,7 +108,7 @@ public class DataStore {
                 if (line.trim().isEmpty()) continue;
                 String[] parts = line.split(";");
                 if (parts.length >= 6) {
-                    String role = (parts.length >= 7) ? parts[6] : "USER";
+                    String role = (parts.length >= 7) ? parts[6] : "PATIENT";
                     users.add(new User(parts[0], parts[1], parts[2], parts[3], parts[4], parts[5], role));
                 }
             }
@@ -153,7 +152,7 @@ public class DataStore {
         nextRequestId = maxId + 1;
     }
 
-    // Write single user to file
+    // Append user
     private void saveUserToFile(User u) {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(USERS_FILE, true))) {
             bw.write(u.getFullName() + ";" + u.getEmail() + ";" + u.getPhone() + ";" + u.getBloodGroup() + ";" + u.getUsername() + ";" + u.getPassword() + ";" + u.getRole());
@@ -163,7 +162,7 @@ public class DataStore {
         }
     }
 
-    // Write single inventory item to file
+    // Append inventory
     private void saveInventoryToFile(BloodInventory item) {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(INVENTORY_FILE, true))) {
             bw.write(item.getBloodGroup() + ";" + item.getLocation() + ";" + item.getHospitalName() + ";" + item.getDistanceKm() + ";" + item.getAvailableBags());
@@ -173,7 +172,7 @@ public class DataStore {
         }
     }
 
-    // Write single request to file
+    // Append request
     private void saveRequestToFile(BloodRequest req) {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(REQUESTS_FILE, true))) {
             bw.write(req.getRequestId() + ";" + req.getPatientName() + ";" + req.getBloodGroup() + ";" + req.getBloodBags() + ";" + req.getLocation() + ";" + req.getHospital() + ";" + req.getContactNo() + ";" + req.getStatus());
@@ -183,7 +182,19 @@ public class DataStore {
         }
     }
 
-    // Synchronize full inventory list back to inventory.txt
+    // Rewrite users.txt
+    public synchronized void saveAllUsersToFiles() {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(USERS_FILE, false))) {
+            for (User u : users) {
+                bw.write(u.getFullName() + ";" + u.getEmail() + ";" + u.getPhone() + ";" + u.getBloodGroup() + ";" + u.getUsername() + ";" + u.getPassword() + ";" + u.getRole());
+                bw.newLine();
+            }
+        } catch (IOException e) {
+            System.err.println("Error rewriting users.txt: " + e.getMessage());
+        }
+    }
+
+    // Rewrite inventory.txt
     public synchronized void saveAllInventoryToFiles() {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(INVENTORY_FILE, false))) {
             for (BloodInventory item : inventories) {
@@ -195,7 +206,7 @@ public class DataStore {
         }
     }
 
-    // Synchronize full requests list back to requests.txt
+    // Rewrite requests.txt
     public synchronized void saveAllRequestsToFiles() {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(REQUESTS_FILE, false))) {
             for (BloodRequest req : requests) {
@@ -207,7 +218,7 @@ public class DataStore {
         }
     }
 
-    // Add or update inventory stock quantity
+    // CREATE & UPDATE Inventory
     public synchronized void addOrUpdateInventory(String bloodGroup, String location, String hospitalName, double distanceKm, int additionalBags) {
         boolean found = false;
         for (BloodInventory item : inventories) {
@@ -226,13 +237,23 @@ public class DataStore {
         saveAllInventoryToFiles();
     }
 
-    // Update request status (PENDING -> APPROVED / FULFILLED) and auto-deduct inventory
+    // DELETE Inventory Item
+    public synchronized boolean deleteInventoryItem(int index) {
+        if (index >= 0 && index < inventories.size()) {
+            inventories.remove(index);
+            saveAllInventoryToFiles();
+            return true;
+        }
+        return false;
+    }
+
+    // UPDATE Request Status
     public synchronized boolean updateRequestStatus(String requestId, String newStatus) {
         for (BloodRequest req : requests) {
             if (req.getRequestId().equalsIgnoreCase(requestId)) {
                 req.setStatus(newStatus.toUpperCase());
                 
-                // Auto-deduct inventory stock when fulfilled/approved
+                // Auto-deduct stock on approval/fulfillment
                 if ("FULFILLED".equalsIgnoreCase(newStatus) || "APPROVED".equalsIgnoreCase(newStatus)) {
                     for (BloodInventory item : inventories) {
                         if (item.getBloodGroup().equalsIgnoreCase(req.getBloodGroup()) &&
@@ -251,7 +272,37 @@ public class DataStore {
         return false;
     }
 
-    // Public API methods
+    // DELETE Blood Request
+    public synchronized boolean deleteBloodRequest(String requestId) {
+        boolean removed = requests.removeIf(req -> req.getRequestId().equalsIgnoreCase(requestId));
+        if (removed) {
+            saveAllRequestsToFiles();
+        }
+        return removed;
+    }
+
+    // UPDATE User Role
+    public synchronized boolean updateUserRole(String username, String newRole) {
+        for (User u : users) {
+            if (u.getUsername().equalsIgnoreCase(username)) {
+                u.setRole(newRole);
+                saveAllUsersToFiles();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // DELETE User
+    public synchronized boolean deleteUser(String username) {
+        boolean removed = users.removeIf(u -> u.getUsername().equalsIgnoreCase(username));
+        if (removed) {
+            saveAllUsersToFiles();
+        }
+        return removed;
+    }
+
+    // User Operations
     public boolean addUser(User user) {
         for (User u : users) {
             if (u.getUsername().equalsIgnoreCase(user.getUsername())) {
@@ -270,6 +321,10 @@ public class DataStore {
             }
         }
         return null;
+    }
+
+    public List<User> getUsers() {
+        return users;
     }
 
     public List<BloodInventory> searchInventory(String bloodGroup, String location) {

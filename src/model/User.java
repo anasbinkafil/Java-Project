@@ -1,7 +1,7 @@
 package model;
 
 /**
- * Model class representing a registered user or donor entity.
+ * Model class representing a user, donor, or admin entity.
  */
 public class User {
     private String fullName;
@@ -10,10 +10,10 @@ public class User {
     private String bloodGroup;
     private String username;
     private String password;
-    private String role; // "USER" or "ADMIN"
+    private String role; // "PATIENT", "DONOR", "ADMIN"
 
     public User(String fullName, String email, String phone, String bloodGroup, String username, String password) {
-        this(fullName, email, phone, bloodGroup, username, password, "USER");
+        this(fullName, email, phone, bloodGroup, username, password, "PATIENT");
     }
 
     public User(String fullName, String email, String phone, String bloodGroup, String username, String password, String role) {
@@ -23,7 +23,7 @@ public class User {
         this.bloodGroup = bloodGroup;
         this.username = username;
         this.password = password;
-        this.role = (role == null || role.isEmpty()) ? "USER" : role;
+        this.role = (role == null || role.trim().isEmpty()) ? "PATIENT" : role.toUpperCase().trim();
     }
 
     public String getFullName() {
@@ -83,6 +83,10 @@ public class User {
     }
 
     public boolean isAdmin() {
-        return "ADMIN".equalsIgnoreCase(role);
+        return "ADMIN".equalsIgnoreCase(role) || "MANAGEMENT".equalsIgnoreCase(role);
+    }
+
+    public boolean isDonor() {
+        return "DONOR".equalsIgnoreCase(role);
     }
 }
