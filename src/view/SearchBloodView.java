@@ -133,12 +133,16 @@ public class SearchBloodView extends JFrame implements ActionListener {
         resultTable.getTableHeader().setForeground(UITheme.TEXT_MUTED);
         resultTable.getTableHeader().setReorderingAllowed(false);
 
-        // Column cell alignment
+        // Column cell alignment & Pill Badge styling
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
-        for (int i = 1; i < columns.length; i++) {
-            resultTable.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
-        }
+        UITheme.PillBadgeRenderer badgeRenderer = new UITheme.PillBadgeRenderer();
+
+        resultTable.getColumnModel().getColumn(0).setCellRenderer(new DefaultTableCellRenderer());
+        resultTable.getColumnModel().getColumn(1).setCellRenderer(centerRenderer);
+        resultTable.getColumnModel().getColumn(2).setCellRenderer(badgeRenderer); // Blood Group Badge
+        resultTable.getColumnModel().getColumn(3).setCellRenderer(badgeRenderer); // Available Status
+        resultTable.getColumnModel().getColumn(4).setCellRenderer(centerRenderer);
 
         JScrollPane tableScroll = new JScrollPane(resultTable);
         tableScroll.setBorder(new LineBorder(UITheme.CARD_BORDER, 1));

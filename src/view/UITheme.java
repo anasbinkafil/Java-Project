@@ -6,26 +6,34 @@ import model.User;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
+import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 /**
- * UI Theme configuration and component styling helper for Swing GUI.
+ * Enhanced UI Theme & Component Styling for Swing GUI.
  */
 public class UITheme {
 
-    // Main color palette
-    public static final Color WINDOW_BG = new Color(247, 249, 252);        // #F7F9FC
-    public static final Color CARD_BG = Color.WHITE;                       // #FFFFFF
-    public static final Color CARD_BORDER = new Color(230, 235, 242);     // #E6EBF2
-    public static final Color PRIMARY_RED = new Color(162, 20, 27);         // #A2141B Crimson Red
-    public static final Color PRIMARY_RED_HOVER = new Color(130, 15, 20);   // Hover Red
-    public static final Color TEXT_DARK = new Color(27, 28, 28);           // #1B1C1C
-    public static final Color TEXT_MUTED = new Color(105, 112, 122);       // #69707A
-    public static final Color INPUT_BORDER = new Color(226, 232, 240);     // #E2E8F0
+    // Rich Palette
+    public static final Color WINDOW_BG = new Color(245, 247, 250);        // #F5F7FA Soft Cool Surface
+    public static final Color CARD_BG = Color.WHITE;                       // #FFFFFF Pure White Container
+    public static final Color CARD_BORDER = new Color(226, 232, 240);     // #E2E8F0 Soft Border
+    public static final Color PRIMARY_RED = new Color(185, 28, 28);         // #B91C1C Deep Crimson Red
+    public static final Color PRIMARY_RED_HOVER = new Color(153, 27, 27);   // Darker Red Hover
+    public static final Color SECONDARY_TEAL = new Color(15, 118, 110);    // #0F766E Clinical Teal
+    public static final Color TEXT_DARK = new Color(15, 23, 42);           // #0F172A Deep Navy Main Text
+    public static final Color TEXT_MUTED = new Color(100, 116, 139);       // #64748B Muted Subtitle Text
+    public static final Color INPUT_BORDER = new Color(203, 213, 225);     // #CBD5E1 Input Border
 
-    // Standard fonts
+    // Pill Badge Colors
+    public static final Color BADGE_BLUE_BG = new Color(232, 240, 254);    // #E8F0FE
+    public static final Color BADGE_BLUE_TEXT = new Color(26, 115, 232);   // #1A73E8
+    public static final Color BADGE_GREEN_BG = new Color(230, 244, 234);   // #E6F4EA
+    public static final Color BADGE_GREEN_TEXT = new Color(19, 115, 51);   // #137333
+
+    // Fonts
     public static final Font FONT_HEADER_TITLE = new Font("Segoe UI", Font.BOLD, 24);
     public static final Font FONT_TITLE = new Font("Segoe UI", Font.BOLD, 20);
     public static final Font FONT_SUBTITLE = new Font("Segoe UI", Font.PLAIN, 13);
@@ -37,23 +45,32 @@ public class UITheme {
         frame.getContentPane().setBackground(WINDOW_BG);
     }
 
-    // Header navigation bar used across main application screens
+    // Top Header Navigation Bar
     public static JPanel createTopNavBar(JFrame frame, String activeTab) {
         JPanel navBar = new JPanel(new BorderLayout());
         navBar.setBackground(Color.WHITE);
         navBar.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createMatteBorder(0, 0, 1, 0, CARD_BORDER),
-                new EmptyBorder(12, 30, 12, 30)
+                new EmptyBorder(14, 32, 14, 32)
         ));
 
-        // Brand logo
-        JLabel logo = new JLabel("BBMS");
-        logo.setFont(new Font("Segoe UI", Font.BOLD, 16));
-        logo.setForeground(PRIMARY_RED);
-        navBar.add(logo, BorderLayout.WEST);
+        // Logo + Brand Title
+        JPanel brandPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 0));
+        brandPanel.setOpaque(false);
 
-        // Navigation links
-        JPanel navItems = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 0));
+        JLabel logoIcon = new JLabel("🩸");
+        logoIcon.setFont(new Font("Segoe UI", Font.PLAIN, 18));
+        brandPanel.add(logoIcon);
+
+        JLabel logo = new JLabel("BBMS");
+        logo.setFont(new Font("Segoe UI", Font.BOLD, 18));
+        logo.setForeground(PRIMARY_RED);
+        brandPanel.add(logo);
+
+        navBar.add(brandPanel, BorderLayout.WEST);
+
+        // Center Navigation Links
+        JPanel navItems = new JPanel(new FlowLayout(FlowLayout.LEFT, 22, 0));
         navItems.setOpaque(false);
 
         User currentUser = NavigationController.getInstance().getCurrentUser();
@@ -90,13 +107,13 @@ public class UITheme {
         }
         navBar.add(navItems, BorderLayout.CENTER);
 
-        // User info + Logout right section
+        // Right side user profile & Logout
         JPanel rightSection = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 0));
         rightSection.setOpaque(false);
 
         if (currentUser != null) {
             JLabel userLabel = new JLabel("👤 " + currentUser.getFullName() + (isAdmin ? " (Admin)" : ""));
-            userLabel.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+            userLabel.setFont(new Font("Segoe UI", Font.BOLD, 12));
             userLabel.setForeground(TEXT_DARK);
             rightSection.add(userLabel);
         }
@@ -134,11 +151,11 @@ public class UITheme {
         footer.setBackground(WINDOW_BG);
         footer.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createMatteBorder(1, 0, 0, 0, CARD_BORDER),
-                new EmptyBorder(15, 30, 15, 30)
+                new EmptyBorder(15, 32, 15, 32)
         ));
 
-        JLabel brand = new JLabel("BBMS");
-        brand.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        JLabel brand = new JLabel("🩸 BBMS Clinical Donor Network");
+        brand.setFont(new Font("Segoe UI", Font.BOLD, 13));
         brand.setForeground(PRIMARY_RED);
         footer.add(brand, BorderLayout.WEST);
 
@@ -155,7 +172,7 @@ public class UITheme {
         button.setBackground(PRIMARY_RED);
         button.setForeground(Color.WHITE);
         button.setFocusPainted(false);
-        button.setBorder(new EmptyBorder(10, 18, 10, 18));
+        button.setBorder(new EmptyBorder(10, 20, 10, 20));
         button.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
         button.addMouseListener(new MouseAdapter() {
@@ -184,7 +201,7 @@ public class UITheme {
         button.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
-                button.setBackground(new Color(245, 247, 250));
+                button.setBackground(new Color(241, 245, 249));
             }
             @Override
             public void mouseExited(MouseEvent e) {
@@ -212,5 +229,30 @@ public class UITheme {
     public static void styleLabel(JLabel label) {
         label.setFont(FONT_LABEL);
         label.setForeground(TEXT_DARK);
+    }
+
+    // Custom Pill Badge Renderer for JTable columns
+    public static class PillBadgeRenderer extends DefaultTableCellRenderer {
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            JLabel label = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+            label.setHorizontalAlignment(SwingConstants.CENTER);
+            label.setFont(new Font("Segoe UI", Font.BOLD, 12));
+            
+            String valStr = String.valueOf(value);
+            if (valStr.matches("(A|B|AB|O)[+-]")) {
+                label.setOpaque(true);
+                label.setBackground(BADGE_BLUE_BG);
+                label.setForeground(BADGE_BLUE_TEXT);
+            } else if (valStr.contains("🟢") || valStr.equalsIgnoreCase("FULFILLED") || valStr.equalsIgnoreCase("APPROVED")) {
+                label.setOpaque(true);
+                label.setBackground(BADGE_GREEN_BG);
+                label.setForeground(BADGE_GREEN_TEXT);
+            } else {
+                label.setOpaque(false);
+                label.setForeground(TEXT_DARK);
+            }
+            return label;
+        }
     }
 }
