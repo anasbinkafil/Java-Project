@@ -10,11 +10,15 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+/**
+ * Details view for displaying submitted patient blood request confirmation.
+ */
 public class MyRequestView extends JFrame implements ActionListener {
     private JTextArea requestArea;
     private JButton backButton;
 
     public MyRequestView(BloodRequest request) {
+        // Frame setup
         setTitle("My Requests - Blood Bank Management System");
         setSize(780, 680);
         setLocationRelativeTo(null);
@@ -22,10 +26,9 @@ public class MyRequestView extends JFrame implements ActionListener {
         UITheme.applyWindowStyle(this);
         setLayout(new BorderLayout());
 
-        // Top Navigation Bar
         add(UITheme.createTopNavBar(this, "My Requests"), BorderLayout.NORTH);
 
-        // Center Content Card Wrapper
+        // Center card wrapper
         JPanel centerWrapper = new JPanel(new GridBagLayout());
         centerWrapper.setOpaque(false);
         centerWrapper.setBorder(new EmptyBorder(25, 25, 25, 25));
@@ -39,6 +42,7 @@ public class MyRequestView extends JFrame implements ActionListener {
         titleLabel.setForeground(UITheme.TEXT_DARK);
         card.add(titleLabel, BorderLayout.NORTH);
 
+        // Confirmation details text area
         requestArea = new JTextArea();
         requestArea.setFont(new Font("Consolas", Font.PLAIN, 13));
         requestArea.setForeground(UITheme.TEXT_DARK);
@@ -83,7 +87,6 @@ public class MyRequestView extends JFrame implements ActionListener {
         centerWrapper.add(card);
         add(centerWrapper, BorderLayout.CENTER);
 
-        // Footer
         add(UITheme.createFooter(), BorderLayout.SOUTH);
 
         setVisible(true);

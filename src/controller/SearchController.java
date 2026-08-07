@@ -5,6 +5,9 @@ import model.DataStore;
 
 import java.util.List;
 
+/**
+ * Controller handling blood inventory search and formatting.
+ */
 public class SearchController {
     private DataStore dataStore;
 
@@ -12,6 +15,7 @@ public class SearchController {
         this.dataStore = DataStore.getInstance();
     }
 
+    // Queries inventory records based on blood group & location filters
     public String searchBlood(String bloodGroup, String location) {
         if (bloodGroup == null || location == null) {
             return "Please select valid search parameters.";
@@ -25,6 +29,7 @@ public class SearchController {
                    "Tip: You can submit a Blood Request directly!";
         }
 
+        // Format inventory results
         StringBuilder builder = new StringBuilder();
         builder.append("=== SEARCH RESULTS (").append(results.size()).append(" Found) ===\n\n");
 

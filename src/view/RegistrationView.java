@@ -11,6 +11,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+/**
+ * Registration view for creating new donor/user accounts.
+ */
 public class RegistrationView extends JFrame implements ActionListener {
     private JTextField nameField, emailField, phoneField, userField;
     private JComboBox<String> bloodCombo;
@@ -24,6 +27,7 @@ public class RegistrationView extends JFrame implements ActionListener {
     public RegistrationView() {
         authController = new AuthController();
 
+        // Main window configuration
         setTitle("Register - Blood Bank Management System");
         setSize(700, 720);
         setLocationRelativeTo(null);
@@ -31,7 +35,7 @@ public class RegistrationView extends JFrame implements ActionListener {
         UITheme.applyWindowStyle(this);
         setLayout(new BorderLayout());
 
-        // Center Content Card
+        // Center card layout
         JPanel centerWrapper = new JPanel(new GridBagLayout());
         centerWrapper.setOpaque(false);
         centerWrapper.setBorder(new EmptyBorder(20, 20, 20, 20));
@@ -44,7 +48,7 @@ public class RegistrationView extends JFrame implements ActionListener {
         gbc.insets = new Insets(6, 8, 6, 8);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        // Back Link
+        // Navigation back link
         backLink = new JLabel("←  BACK TO WELCOME");
         backLink.setFont(new Font("Segoe UI", Font.BOLD, 11));
         backLink.setForeground(UITheme.TEXT_MUTED);
@@ -59,7 +63,7 @@ public class RegistrationView extends JFrame implements ActionListener {
         gbc.insets = new Insets(0, 5, 12, 5);
         card.add(backLink, gbc);
 
-        // Title
+        // Header titles
         JLabel titleLabel = new JLabel("Create Your BBMS Account", SwingConstants.CENTER);
         titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 22));
         titleLabel.setForeground(UITheme.TEXT_DARK);
@@ -67,7 +71,6 @@ public class RegistrationView extends JFrame implements ActionListener {
         gbc.insets = new Insets(0, 5, 4, 5);
         card.add(titleLabel, gbc);
 
-        // Subtitle
         JLabel subLabel = new JLabel("Join the network to manage and request life-saving resources.", SwingConstants.CENTER);
         subLabel.setFont(UITheme.FONT_SUBTITLE);
         subLabel.setForeground(UITheme.TEXT_MUTED);
@@ -77,7 +80,7 @@ public class RegistrationView extends JFrame implements ActionListener {
 
         gbc.insets = new Insets(5, 5, 5, 5);
 
-        // Row 1: Full Name | Username
+        // Form fields layout
         JLabel nameLabel = new JLabel("Full Name");
         UITheme.styleLabel(nameLabel);
         gbc.gridx = 0; gbc.gridy = 3; gbc.gridwidth = 1;
@@ -98,7 +101,6 @@ public class RegistrationView extends JFrame implements ActionListener {
         gbc.gridx = 1; gbc.gridy = 4;
         card.add(userField, gbc);
 
-        // Row 2: Email Address (Full Width)
         JLabel emailLabel = new JLabel("Email Address");
         UITheme.styleLabel(emailLabel);
         gbc.gridx = 0; gbc.gridy = 5; gbc.gridwidth = 2;
@@ -109,7 +111,6 @@ public class RegistrationView extends JFrame implements ActionListener {
         gbc.gridy = 6;
         card.add(emailField, gbc);
 
-        // Row 3: Phone Number | Blood Group
         JLabel phoneLabel = new JLabel("Phone Number");
         UITheme.styleLabel(phoneLabel);
         gbc.gridx = 0; gbc.gridy = 7; gbc.gridwidth = 1;
@@ -130,7 +131,6 @@ public class RegistrationView extends JFrame implements ActionListener {
         gbc.gridx = 1; gbc.gridy = 8;
         card.add(bloodCombo, gbc);
 
-        // Row 4: Password (Full Width)
         JLabel passLabel = new JLabel("Password");
         UITheme.styleLabel(passLabel);
         gbc.gridx = 0; gbc.gridy = 9; gbc.gridwidth = 2;
@@ -141,7 +141,7 @@ public class RegistrationView extends JFrame implements ActionListener {
         gbc.gridy = 10;
         card.add(passField, gbc);
 
-        // Button: Register Now (Full Width)
+        // Primary action button
         registerButton = new JButton("Register Now");
         UITheme.stylePrimaryButton(registerButton);
         registerButton.setPreferredSize(new Dimension(380, 42));
@@ -150,7 +150,7 @@ public class RegistrationView extends JFrame implements ActionListener {
         gbc.insets = new Insets(18, 5, 10, 5);
         card.add(registerButton, gbc);
 
-        // Already have an account? Login
+        // Redirect link to login
         loginLink = new JLabel("Already have an account? Login", SwingConstants.CENTER);
         loginLink.setFont(new Font("Segoe UI", Font.PLAIN, 12));
         loginLink.setForeground(UITheme.TEXT_MUTED);
@@ -168,7 +168,6 @@ public class RegistrationView extends JFrame implements ActionListener {
         centerWrapper.add(card);
         add(centerWrapper, BorderLayout.CENTER);
 
-        // Footer
         add(UITheme.createFooter(), BorderLayout.SOUTH);
 
         setVisible(true);
@@ -185,6 +184,7 @@ public class RegistrationView extends JFrame implements ActionListener {
             String username = userField.getText();
             String password = new String(passField.getPassword());
 
+            // Process registration via controller
             String errorMsg = authController.registerUser(name, email, phone, blood, username, password);
 
             if (errorMsg != null) {

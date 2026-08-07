@@ -12,6 +12,9 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+/**
+ * Main dashboard screen for searching available blood stocks across hospitals.
+ */
 public class SearchBloodView extends JFrame implements ActionListener {
     private JComboBox<String> bloodCombo, locationCombo;
     private JTable resultTable;
@@ -26,6 +29,7 @@ public class SearchBloodView extends JFrame implements ActionListener {
     public SearchBloodView() {
         searchController = new SearchController();
 
+        // Main frame properties
         setTitle("Search Available Blood - Blood Bank System");
         setSize(980, 700);
         setLocationRelativeTo(null);
@@ -33,15 +37,15 @@ public class SearchBloodView extends JFrame implements ActionListener {
         UITheme.applyWindowStyle(this);
         setLayout(new BorderLayout());
 
-        // Top Navigation Bar
+        // Header navigation bar
         add(UITheme.createTopNavBar(this, "Search"), BorderLayout.NORTH);
 
-        // Main Content Panel
+        // Main content wrapper
         JPanel mainContent = new JPanel(new BorderLayout(20, 20));
         mainContent.setOpaque(false);
         mainContent.setBorder(new EmptyBorder(25, 35, 25, 35));
 
-        // Header Section
+        // Header text section
         JPanel headerSection = new JPanel();
         headerSection.setLayout(new BoxLayout(headerSection, BoxLayout.Y_AXIS));
         headerSection.setOpaque(false);
@@ -60,15 +64,15 @@ public class SearchBloodView extends JFrame implements ActionListener {
 
         mainContent.add(headerSection, BorderLayout.NORTH);
 
-        // Center Panel containing Filters + Table + Sidebar
+        // Body section layout
         JPanel bodyPanel = new JPanel(new BorderLayout(20, 20));
         bodyPanel.setOpaque(false);
 
-        // Filter Card (Top of Body)
+        // Filters bar card
         JPanel filterCard = UITheme.createCardPanel();
         filterCard.setLayout(new FlowLayout(FlowLayout.LEFT, 20, 10));
 
-        // Blood Group Combo
+        // Dropdown controls
         JPanel bgGroup = new JPanel(new BorderLayout(5, 5));
         bgGroup.setOpaque(false);
         JLabel bgLabel = new JLabel("Blood Group");
@@ -81,7 +85,6 @@ public class SearchBloodView extends JFrame implements ActionListener {
         bgGroup.add(bloodCombo, BorderLayout.CENTER);
         filterCard.add(bgGroup);
 
-        // Location Combo
         JPanel locGroup = new JPanel(new BorderLayout(5, 5));
         locGroup.setOpaque(false);
         JLabel locLabel = new JLabel("Location");
@@ -94,7 +97,7 @@ public class SearchBloodView extends JFrame implements ActionListener {
         locGroup.add(locationCombo, BorderLayout.CENTER);
         filterCard.add(locGroup);
 
-        // Search Button
+        // Search action button
         JPanel btnGroup = new JPanel(new BorderLayout(5, 5));
         btnGroup.setOpaque(false);
         btnGroup.add(new JLabel(" "), BorderLayout.NORTH);
@@ -108,7 +111,7 @@ public class SearchBloodView extends JFrame implements ActionListener {
 
         bodyPanel.add(filterCard, BorderLayout.NORTH);
 
-        // Left Side: Inventory Table Card
+        // Inventory search results table
         JPanel tableCard = UITheme.createCardPanel();
         tableCard.setLayout(new BorderLayout(10, 10));
 
@@ -130,7 +133,7 @@ public class SearchBloodView extends JFrame implements ActionListener {
         resultTable.getTableHeader().setForeground(UITheme.TEXT_MUTED);
         resultTable.getTableHeader().setReorderingAllowed(false);
 
-        // Center align table text
+        // Column cell alignment
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
         for (int i = 1; i < columns.length; i++) {
@@ -144,7 +147,7 @@ public class SearchBloodView extends JFrame implements ActionListener {
         tableCard.add(tableScroll, BorderLayout.CENTER);
         bodyPanel.add(tableCard, BorderLayout.CENTER);
 
-        // Right Side: Urgent Need Card
+        // Right side action widget
         JPanel sidebarCard = UITheme.createCardPanel();
         sidebarCard.setLayout(new BoxLayout(sidebarCard, BoxLayout.Y_AXIS));
         sidebarCard.setPreferredSize(new Dimension(240, 280));
@@ -184,18 +187,17 @@ public class SearchBloodView extends JFrame implements ActionListener {
         mainContent.add(bodyPanel, BorderLayout.CENTER);
         add(mainContent, BorderLayout.CENTER);
 
-        // Footer
         add(UITheme.createFooter(), BorderLayout.SOUTH);
 
-        // Load initial data
+        // Populate initial table data
         loadInventoryData("", "");
 
         setVisible(true);
     }
 
+    // Loads inventory rows into table
     private void loadInventoryData(String bloodGroup, String location) {
         tableModel.setRowCount(0);
-        // Seed default demo rows matching exact Stitch screenshot
         tableModel.addRow(new Object[]{"🏥  Square Hospital", "Dhanmondi", "B-", "🟢  5 Bags", "1.2 KM"});
         tableModel.addRow(new Object[]{"🏥  Labaid Specialized", "Dhanmondi", "B-", "🟡  2 Bags", "2.5 KM"});
         tableModel.addRow(new Object[]{"🩸  Quantum Blood Lab", "Banani", "B-", "🟢  12 Bags", "6.8 KM"});
@@ -211,6 +213,7 @@ public class SearchBloodView extends JFrame implements ActionListener {
             String location = (String) locationCombo.getSelectedItem();
             if (locationCombo.getSelectedIndex() == 0) location = "";
 
+            // Query inventory via SearchController
             String resultText = searchController.searchBlood(blood, location);
             tableModel.setRowCount(0);
             if (resultText != null && !resultText.isEmpty()) {

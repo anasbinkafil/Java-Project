@@ -1,12 +1,16 @@
 import controller.NavigationController;
 import model.DataStore;
 
+/**
+ * Application entry point for the Blood Bank Management System.
+ */
 public class Start {
+
     public static void main(String[] args) {
-        // Initialize central data store singleton
+        // Initialize data store with default demo data
         DataStore.getInstance();
 
-        // Launch welcome screen via NavigationController
+        // Launch landing screen
         NavigationController.getInstance().openWelcomeView(null);
     }
 }

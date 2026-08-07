@@ -1,27 +1,28 @@
 package view;
 
 import javax.swing.*;
-import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+/**
+ * UI Theme configuration and component styling helper for Swing GUI.
+ */
 public class UITheme {
-    // Exact Colors matching the uploaded Stitch MCP Screenshots
-    public static final Color WINDOW_BG = new Color(247, 249, 252);        // #F7F9FC
-    public static final Color CARD_BG = Color.WHITE;                       // #FFFFFF
-    public static final Color CARD_BORDER = new Color(230, 235, 242);     // Soft border
-    public static final Color PRIMARY_RED = new Color(162, 20, 27);         // #A2141B Dark Crimson Red
-    public static final Color PRIMARY_RED_HOVER = new Color(130, 15, 20);   // Darker Red
-    public static final Color TEXT_DARK = new Color(27, 28, 28);           // #1B1C1C
-    public static final Color TEXT_MUTED = new Color(105, 112, 122);       // #69707A
-    public static final Color INPUT_BORDER = new Color(226, 232, 240);     // #E2E8F0
-    public static final Color BADGE_BLUE_BG = new Color(211, 230, 255);    // #D3E6FF
-    public static final Color BADGE_BLUE_TEXT = new Color(0, 72, 129);
 
-    // Fonts
+    // Main color palette
+    public static final Color WINDOW_BG = new Color(247, 249, 252);        // Light background
+    public static final Color CARD_BG = Color.WHITE;                       // Card container white
+    public static final Color CARD_BORDER = new Color(230, 235, 242);     // Border shade
+    public static final Color PRIMARY_RED = new Color(162, 20, 27);         // Primary crimson red
+    public static final Color PRIMARY_RED_HOVER = new Color(130, 15, 20);   // Darker hover red
+    public static final Color TEXT_DARK = new Color(27, 28, 28);           // Main body text
+    public static final Color TEXT_MUTED = new Color(105, 112, 122);       // Secondary text
+    public static final Color INPUT_BORDER = new Color(226, 232, 240);     // Input field border
+
+    // Standard fonts
     public static final Font FONT_HEADER_TITLE = new Font("Segoe UI", Font.BOLD, 24);
     public static final Font FONT_TITLE = new Font("Segoe UI", Font.BOLD, 20);
     public static final Font FONT_SUBTITLE = new Font("Segoe UI", Font.PLAIN, 13);
@@ -29,10 +30,12 @@ public class UITheme {
     public static final Font FONT_BODY = new Font("Segoe UI", Font.PLAIN, 13);
     public static final Font FONT_BODY_BOLD = new Font("Segoe UI", Font.BOLD, 13);
 
+    // Apply background color to frame window
     public static void applyWindowStyle(JFrame frame) {
         frame.getContentPane().setBackground(WINDOW_BG);
     }
 
+    // Header navigation bar used across main application screens
     public static JPanel createTopNavBar(JFrame frame, String activeTab) {
         JPanel navBar = new JPanel(new BorderLayout());
         navBar.setBackground(Color.WHITE);
@@ -41,13 +44,13 @@ public class UITheme {
                 new EmptyBorder(12, 30, 12, 30)
         ));
 
-        // Brand Logo
+        // Brand logo
         JLabel logo = new JLabel("BBMS");
         logo.setFont(new Font("Segoe UI", Font.BOLD, 16));
         logo.setForeground(PRIMARY_RED);
         navBar.add(logo, BorderLayout.WEST);
 
-        // Nav Items Center
+        // Center navigation items
         JPanel navItems = new JPanel(new FlowLayout(FlowLayout.LEFT, 25, 0));
         navItems.setOpaque(false);
 
@@ -78,7 +81,7 @@ public class UITheme {
         }
         navBar.add(navItems, BorderLayout.CENTER);
 
-        // Right side Logout
+        // Logout action
         JLabel logoutLabel = new JLabel("Logout");
         logoutLabel.setFont(new Font("Segoe UI", Font.BOLD, 12));
         logoutLabel.setForeground(TEXT_MUTED);
@@ -94,6 +97,7 @@ public class UITheme {
         return navBar;
     }
 
+    // Creates white card panel container
     public static JPanel createCardPanel() {
         JPanel card = new JPanel();
         card.setBackground(CARD_BG);
@@ -104,6 +108,7 @@ public class UITheme {
         return card;
     }
 
+    // Footer component
     public static JPanel createFooter() {
         JPanel footer = new JPanel(new BorderLayout());
         footer.setBackground(WINDOW_BG);
@@ -125,6 +130,7 @@ public class UITheme {
         return footer;
     }
 
+    // Button hover effects and styles
     public static void stylePrimaryButton(JButton button) {
         button.setFont(FONT_BODY_BOLD);
         button.setBackground(PRIMARY_RED);

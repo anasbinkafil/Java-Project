@@ -6,12 +6,16 @@ import view.*;
 
 import javax.swing.*;
 
+/**
+ * Singleton controller managing navigation between Swing views.
+ */
 public class NavigationController {
     private static NavigationController instance;
     private User currentUser;
 
     private NavigationController() {}
 
+    // Thread-safe singleton accessor
     public static synchronized NavigationController getInstance() {
         if (instance == null) {
             instance = new NavigationController();
@@ -27,31 +31,37 @@ public class NavigationController {
         this.currentUser = user;
     }
 
+    // Opens Welcome screen and disposes current frame
     public void openWelcomeView(JFrame currentFrame) {
         if (currentFrame != null) currentFrame.dispose();
         new WelcomeView();
     }
 
+    // Opens Login screen
     public void openLoginView(JFrame currentFrame) {
         if (currentFrame != null) currentFrame.dispose();
         new LoginView();
     }
 
+    // Opens Registration screen
     public void openRegistrationView(JFrame currentFrame) {
         if (currentFrame != null) currentFrame.dispose();
         new RegistrationView();
     }
 
+    // Opens Search screen
     public void openSearchBloodView(JFrame currentFrame) {
         if (currentFrame != null) currentFrame.dispose();
         new SearchBloodView();
     }
 
+    // Opens Request submission screen
     public void openRequestBloodView(JFrame currentFrame) {
         if (currentFrame != null) currentFrame.dispose();
         new RequestBloodView();
     }
 
+    // Opens My Requests details screen
     public void openMyRequestView(JFrame currentFrame, BloodRequest request) {
         if (currentFrame != null) currentFrame.dispose();
         new MyRequestView(request);

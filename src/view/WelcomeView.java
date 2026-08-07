@@ -8,10 +8,14 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+/**
+ * Landing screen window for initial navigation (Login / Register).
+ */
 public class WelcomeView extends JFrame implements ActionListener {
     private JButton loginButton, registerButton;
 
     public WelcomeView() {
+        // Setup window properties
         setTitle("Blood Bank Management System");
         setSize(720, 600);
         setLocationRelativeTo(null);
@@ -19,7 +23,7 @@ public class WelcomeView extends JFrame implements ActionListener {
         UITheme.applyWindowStyle(this);
         setLayout(new BorderLayout());
 
-        // Center Content Card Wrapper
+        // Center card wrapper
         JPanel centerWrapper = new JPanel(new GridBagLayout());
         centerWrapper.setOpaque(false);
         centerWrapper.setBorder(new EmptyBorder(25, 25, 25, 25));
@@ -33,6 +37,7 @@ public class WelcomeView extends JFrame implements ActionListener {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.gridx = 0;
 
+        // Title branding
         JLabel logoLabel = new JLabel("BBMS", SwingConstants.CENTER);
         logoLabel.setFont(new Font("Segoe UI", Font.BOLD, 28));
         logoLabel.setForeground(UITheme.PRIMARY_RED);
@@ -51,7 +56,7 @@ public class WelcomeView extends JFrame implements ActionListener {
         gbc.gridy = 2;
         card.add(infoLabel, gbc);
 
-        // Buttons Panel
+        // Action buttons
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 15));
         buttonPanel.setOpaque(false);
 
@@ -74,7 +79,7 @@ public class WelcomeView extends JFrame implements ActionListener {
         centerWrapper.add(card);
         add(centerWrapper, BorderLayout.CENTER);
 
-        // Footer
+        // Bottom footer
         add(UITheme.createFooter(), BorderLayout.SOUTH);
 
         setVisible(true);

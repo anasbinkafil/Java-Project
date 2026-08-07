@@ -12,6 +12,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+/**
+ * Screen form for submitting an urgent patient blood request.
+ */
 public class RequestBloodView extends JFrame implements ActionListener {
     private JTextField nameField, bagField, contactField;
     private JComboBox<String> bloodCombo, locationCombo, hospitalCombo;
@@ -35,6 +38,7 @@ public class RequestBloodView extends JFrame implements ActionListener {
     public RequestBloodView() {
         requestController = new RequestController();
 
+        // Main frame config
         setTitle("Submit Blood Request - Blood Bank Management System");
         setSize(700, 740);
         setLocationRelativeTo(null);
@@ -42,10 +46,9 @@ public class RequestBloodView extends JFrame implements ActionListener {
         UITheme.applyWindowStyle(this);
         setLayout(new BorderLayout());
 
-        // Top Nav Bar
         add(UITheme.createTopNavBar(this, "Request"), BorderLayout.NORTH);
 
-        // Center Content Card Wrapper
+        // Center card wrapper
         JPanel centerWrapper = new JPanel(new GridBagLayout());
         centerWrapper.setOpaque(false);
         centerWrapper.setBorder(new EmptyBorder(20, 20, 20, 20));
@@ -58,7 +61,7 @@ public class RequestBloodView extends JFrame implements ActionListener {
         gbc.insets = new Insets(6, 8, 6, 8);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        // Back Link
+        // Navigation back link
         backLink = new JLabel("←  BACK TO SEARCH");
         backLink.setFont(new Font("Segoe UI", Font.BOLD, 11));
         backLink.setForeground(UITheme.TEXT_MUTED);
@@ -73,7 +76,7 @@ public class RequestBloodView extends JFrame implements ActionListener {
         gbc.insets = new Insets(0, 5, 12, 5);
         card.add(backLink, gbc);
 
-        // Title
+        // Section titles
         JLabel titleLabel = new JLabel("Submit Urgent Blood Request", SwingConstants.CENTER);
         titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 22));
         titleLabel.setForeground(UITheme.TEXT_DARK);
@@ -81,7 +84,6 @@ public class RequestBloodView extends JFrame implements ActionListener {
         gbc.insets = new Insets(0, 5, 4, 5);
         card.add(titleLabel, gbc);
 
-        // Subtitle
         JLabel subLabel = new JLabel("Fill out patient details to alert verified hospitals & donor network.", SwingConstants.CENTER);
         subLabel.setFont(UITheme.FONT_SUBTITLE);
         subLabel.setForeground(UITheme.TEXT_MUTED);
@@ -91,7 +93,7 @@ public class RequestBloodView extends JFrame implements ActionListener {
 
         gbc.insets = new Insets(5, 5, 5, 5);
 
-        // Patient Name (Full Width)
+        // Input form layout
         JLabel nameLabel = new JLabel("Patient Name");
         UITheme.styleLabel(nameLabel);
         gbc.gridx = 0; gbc.gridy = 3; gbc.gridwidth = 2;
@@ -102,7 +104,6 @@ public class RequestBloodView extends JFrame implements ActionListener {
         gbc.gridy = 4;
         card.add(nameField, gbc);
 
-        // Row: Blood Group | Bags
         JLabel bloodLabel = new JLabel("Required Blood Group");
         UITheme.styleLabel(bloodLabel);
         gbc.gridx = 0; gbc.gridy = 5; gbc.gridwidth = 1;
@@ -123,7 +124,6 @@ public class RequestBloodView extends JFrame implements ActionListener {
         gbc.gridx = 1; gbc.gridy = 6;
         card.add(bagField, gbc);
 
-        // Row: Location | Hospital
         JLabel locLabel = new JLabel("Location Area");
         UITheme.styleLabel(locLabel);
         gbc.gridx = 0; gbc.gridy = 7; gbc.gridwidth = 1;
@@ -144,7 +144,6 @@ public class RequestBloodView extends JFrame implements ActionListener {
         gbc.gridx = 1; gbc.gridy = 8;
         card.add(hospitalCombo, gbc);
 
-        // Contact Phone Number (Full Width)
         JLabel contactLabel = new JLabel("Contact Phone Number");
         UITheme.styleLabel(contactLabel);
         gbc.gridx = 0; gbc.gridy = 9; gbc.gridwidth = 2;
@@ -155,7 +154,7 @@ public class RequestBloodView extends JFrame implements ActionListener {
         gbc.gridy = 10;
         card.add(contactField, gbc);
 
-        // Button: Submit Request
+        // Request submission button
         requestButton = new JButton("Submit Request");
         UITheme.stylePrimaryButton(requestButton);
         requestButton.setPreferredSize(new Dimension(400, 42));
@@ -167,7 +166,6 @@ public class RequestBloodView extends JFrame implements ActionListener {
         centerWrapper.add(card);
         add(centerWrapper, BorderLayout.CENTER);
 
-        // Footer
         add(UITheme.createFooter(), BorderLayout.SOUTH);
 
         setVisible(true);
@@ -187,6 +185,7 @@ public class RequestBloodView extends JFrame implements ActionListener {
                 if (hospitalCombo.getSelectedIndex() == 0) hospital = "";
                 String contact = contactField.getText();
 
+                // Validate and submit blood request
                 BloodRequest req = requestController.submitRequest(patientName, bloodGroup, bloodBags, location, hospital, contact);
 
                 JOptionPane.showMessageDialog(this, "Blood Request Submitted Successfully!\nRequest ID: " + req.getRequestId());

@@ -3,6 +3,9 @@ package controller;
 import model.DataStore;
 import model.User;
 
+/**
+ * Controller handling user registration and login validation.
+ */
 public class AuthController {
     private DataStore dataStore;
 
@@ -10,6 +13,7 @@ public class AuthController {
         this.dataStore = DataStore.getInstance();
     }
 
+    // Validates inputs and registers new user account
     public String registerUser(String fullName, String email, String phone, String bloodGroup, String username, String password) {
         if (fullName == null || fullName.trim().isEmpty()) {
             return "Full Name cannot be empty.";
@@ -38,9 +42,10 @@ public class AuthController {
         }
 
         NavigationController.getInstance().setCurrentUser(newUser);
-        return null; // Success, no error message
+        return null; // Return null on successful registration
     }
 
+    // Authenticates credentials against DataStore
     public User loginUser(String username, String password) {
         if (username == null || username.trim().isEmpty() || password == null || password.isEmpty()) {
             return null;

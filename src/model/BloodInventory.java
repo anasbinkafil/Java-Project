@@ -1,5 +1,8 @@
 package model;
 
+/**
+ * Model class representing blood inventory at a specific hospital or center.
+ */
 public class BloodInventory {
     private String bloodGroup;
     private String location;

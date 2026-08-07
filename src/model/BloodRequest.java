@@ -1,5 +1,8 @@
 package model;
 
+/**
+ * Model class representing a submitted patient blood request.
+ */
 public class BloodRequest {
     private String requestId;
     private String patientName;

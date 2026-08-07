@@ -12,6 +12,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+/**
+ * Login view frame for user authentication.
+ */
 public class LoginView extends JFrame implements ActionListener {
     private JTextField userField;
     private JPasswordField passField;
@@ -22,6 +25,7 @@ public class LoginView extends JFrame implements ActionListener {
     public LoginView() {
         authController = new AuthController();
 
+        // Frame setup
         setTitle("Login - Blood Bank Management System");
         setSize(700, 600);
         setLocationRelativeTo(null);
@@ -29,7 +33,7 @@ public class LoginView extends JFrame implements ActionListener {
         UITheme.applyWindowStyle(this);
         setLayout(new BorderLayout());
 
-        // Center Content Card Wrapper
+        // Centered form container
         JPanel centerWrapper = new JPanel(new GridBagLayout());
         centerWrapper.setOpaque(false);
         centerWrapper.setBorder(new EmptyBorder(25, 25, 25, 25));
@@ -42,7 +46,7 @@ public class LoginView extends JFrame implements ActionListener {
         gbc.insets = new Insets(6, 8, 6, 8);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        // Back Link
+        // Back link
         backLink = new JLabel("←  BACK TO WELCOME");
         backLink.setFont(new Font("Segoe UI", Font.BOLD, 11));
         backLink.setForeground(UITheme.TEXT_MUTED);
@@ -57,7 +61,7 @@ public class LoginView extends JFrame implements ActionListener {
         gbc.insets = new Insets(0, 5, 12, 5);
         card.add(backLink, gbc);
 
-        // Title
+        // Titles
         JLabel titleLabel = new JLabel("Sign In to BBMS", SwingConstants.CENTER);
         titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 22));
         titleLabel.setForeground(UITheme.TEXT_DARK);
@@ -65,7 +69,6 @@ public class LoginView extends JFrame implements ActionListener {
         gbc.insets = new Insets(0, 5, 4, 5);
         card.add(titleLabel, gbc);
 
-        // Subtitle
         JLabel subLabel = new JLabel("Enter your credentials to access inventory & requests.", SwingConstants.CENTER);
         subLabel.setFont(UITheme.FONT_SUBTITLE);
         subLabel.setForeground(UITheme.TEXT_MUTED);
@@ -75,7 +78,7 @@ public class LoginView extends JFrame implements ActionListener {
 
         gbc.insets = new Insets(6, 5, 6, 5);
 
-        // Username
+        // Credentials inputs
         JLabel userLabel = new JLabel("Username");
         UITheme.styleLabel(userLabel);
         gbc.gridx = 0; gbc.gridy = 3; gbc.gridwidth = 2;
@@ -86,7 +89,6 @@ public class LoginView extends JFrame implements ActionListener {
         gbc.gridy = 4;
         card.add(userField, gbc);
 
-        // Password
         JLabel passLabel = new JLabel("Password");
         UITheme.styleLabel(passLabel);
         gbc.gridy = 5;
@@ -97,7 +99,7 @@ public class LoginView extends JFrame implements ActionListener {
         gbc.gridy = 6;
         card.add(passField, gbc);
 
-        // Login Button
+        // Login submit button
         loginButton = new JButton("Login");
         UITheme.stylePrimaryButton(loginButton);
         loginButton.setPreferredSize(new Dimension(360, 42));
@@ -106,7 +108,7 @@ public class LoginView extends JFrame implements ActionListener {
         gbc.insets = new Insets(18, 5, 10, 5);
         card.add(loginButton, gbc);
 
-        // Register Link
+        // Registration redirect link
         registerLink = new JLabel("Need an account? Register Now", SwingConstants.CENTER);
         registerLink.setFont(new Font("Segoe UI", Font.PLAIN, 12));
         registerLink.setForeground(UITheme.TEXT_MUTED);
@@ -124,7 +126,6 @@ public class LoginView extends JFrame implements ActionListener {
         centerWrapper.add(card);
         add(centerWrapper, BorderLayout.CENTER);
 
-        // Footer
         add(UITheme.createFooter(), BorderLayout.SOUTH);
 
         setVisible(true);
@@ -136,6 +137,7 @@ public class LoginView extends JFrame implements ActionListener {
             String username = userField.getText();
             String password = new String(passField.getPassword());
 
+            // Authenticate user via AuthController
             User user = authController.loginUser(username, password);
             if (user != null) {
                 JOptionPane.showMessageDialog(this, "Login Successful! Welcome, " + user.getFullName());

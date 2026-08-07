@@ -1,5 +1,8 @@
 package model;
 
+/**
+ * Model class representing a registered user or donor entity.
+ */
 public class User {
     private String fullName;
     private String email;
