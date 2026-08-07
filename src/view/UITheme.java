@@ -1,5 +1,8 @@
 package view;
 
+import controller.NavigationController;
+import model.User;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
@@ -13,14 +16,14 @@ import java.awt.event.MouseEvent;
 public class UITheme {
 
     // Main color palette
-    public static final Color WINDOW_BG = new Color(247, 249, 252);        // Light background
-    public static final Color CARD_BG = Color.WHITE;                       // Card container white
-    public static final Color CARD_BORDER = new Color(230, 235, 242);     // Border shade
-    public static final Color PRIMARY_RED = new Color(162, 20, 27);         // Primary crimson red
-    public static final Color PRIMARY_RED_HOVER = new Color(130, 15, 20);   // Darker hover red
-    public static final Color TEXT_DARK = new Color(27, 28, 28);           // Main body text
-    public static final Color TEXT_MUTED = new Color(105, 112, 122);       // Secondary text
-    public static final Color INPUT_BORDER = new Color(226, 232, 240);     // Input field border
+    public static final Color WINDOW_BG = new Color(247, 249, 252);        // #F7F9FC
+    public static final Color CARD_BG = Color.WHITE;                       // #FFFFFF
+    public static final Color CARD_BORDER = new Color(230, 235, 242);     // #E6EBF2
+    public static final Color PRIMARY_RED = new Color(162, 20, 27);         // #A2141B Crimson Red
+    public static final Color PRIMARY_RED_HOVER = new Color(130, 15, 20);   // Hover Red
+    public static final Color TEXT_DARK = new Color(27, 28, 28);           // #1B1C1C
+    public static final Color TEXT_MUTED = new Color(105, 112, 122);       // #69707A
+    public static final Color INPUT_BORDER = new Color(226, 232, 240);     // #E2E8F0
 
     // Standard fonts
     public static final Font FONT_HEADER_TITLE = new Font("Segoe UI", Font.BOLD, 24);
@@ -30,7 +33,6 @@ public class UITheme {
     public static final Font FONT_BODY = new Font("Segoe UI", Font.PLAIN, 13);
     public static final Font FONT_BODY_BOLD = new Font("Segoe UI", Font.BOLD, 13);
 
-    // Apply background color to frame window
     public static void applyWindowStyle(JFrame frame) {
         frame.getContentPane().setBackground(WINDOW_BG);
     }
@@ -50,15 +52,20 @@ public class UITheme {
         logo.setForeground(PRIMARY_RED);
         navBar.add(logo, BorderLayout.WEST);
 
-        // Center navigation items
-        JPanel navItems = new JPanel(new FlowLayout(FlowLayout.LEFT, 25, 0));
+        // Navigation links
+        JPanel navItems = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 0));
         navItems.setOpaque(false);
 
-        String[] tabs = {"Search", "Request", "My Requests"};
+        User currentUser = NavigationController.getInstance().getCurrentUser();
+        boolean isAdmin = (currentUser != null && currentUser.isAdmin());
+
+        String[] tabs = isAdmin ? new String[]{"Search", "Request", "My Requests", "Manage Stock & Requests"}
+                                : new String[]{"Search", "Request", "My Requests"};
+
         for (String tab : tabs) {
             JLabel tabLabel = new JLabel(tab);
             tabLabel.setFont(new Font("Segoe UI", Font.BOLD, 13));
-            if (tab.equalsIgnoreCase(activeTab)) {
+            if (tab.equalsIgnoreCase(activeTab) || (activeTab.startsWith("Manage") && tab.startsWith("Manage"))) {
                 tabLabel.setForeground(PRIMARY_RED);
                 tabLabel.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, PRIMARY_RED));
             } else {
@@ -69,11 +76,13 @@ public class UITheme {
                 @Override
                 public void mouseClicked(MouseEvent e) {
                     if (tab.equalsIgnoreCase("Search")) {
-                        controller.NavigationController.getInstance().openSearchBloodView(frame);
+                        NavigationController.getInstance().openSearchBloodView(frame);
                     } else if (tab.equalsIgnoreCase("Request")) {
-                        controller.NavigationController.getInstance().openRequestBloodView(frame);
+                        NavigationController.getInstance().openRequestBloodView(frame);
                     } else if (tab.equalsIgnoreCase("My Requests")) {
-                        controller.NavigationController.getInstance().openMyRequestView(frame, null);
+                        NavigationController.getInstance().openMyRequestView(frame, null);
+                    } else if (tab.startsWith("Manage")) {
+                        NavigationController.getInstance().openManageInventoryView(frame);
                     }
                 }
             });
@@ -81,23 +90,35 @@ public class UITheme {
         }
         navBar.add(navItems, BorderLayout.CENTER);
 
-        // Logout action
+        // User info + Logout right section
+        JPanel rightSection = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 0));
+        rightSection.setOpaque(false);
+
+        if (currentUser != null) {
+            JLabel userLabel = new JLabel("👤 " + currentUser.getFullName() + (isAdmin ? " (Admin)" : ""));
+            userLabel.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+            userLabel.setForeground(TEXT_DARK);
+            rightSection.add(userLabel);
+        }
+
         JLabel logoutLabel = new JLabel("Logout");
         logoutLabel.setFont(new Font("Segoe UI", Font.BOLD, 12));
-        logoutLabel.setForeground(TEXT_MUTED);
+        logoutLabel.setForeground(PRIMARY_RED);
         logoutLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
         logoutLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                controller.NavigationController.getInstance().openWelcomeView(frame);
+                NavigationController.getInstance().setCurrentUser(null);
+                NavigationController.getInstance().openWelcomeView(frame);
             }
         });
-        navBar.add(logoutLabel, BorderLayout.EAST);
+        rightSection.add(logoutLabel);
+
+        navBar.add(rightSection, BorderLayout.EAST);
 
         return navBar;
     }
 
-    // Creates white card panel container
     public static JPanel createCardPanel() {
         JPanel card = new JPanel();
         card.setBackground(CARD_BG);
@@ -108,7 +129,6 @@ public class UITheme {
         return card;
     }
 
-    // Footer component
     public static JPanel createFooter() {
         JPanel footer = new JPanel(new BorderLayout());
         footer.setBackground(WINDOW_BG);
@@ -130,7 +150,6 @@ public class UITheme {
         return footer;
     }
 
-    // Button hover effects and styles
     public static void stylePrimaryButton(JButton button) {
         button.setFont(FONT_BODY_BOLD);
         button.setBackground(PRIMARY_RED);

@@ -31,7 +31,7 @@ public class NavigationController {
         this.currentUser = user;
     }
 
-    // Opens Welcome screen and disposes current frame
+    // Opens Welcome screen
     public void openWelcomeView(JFrame currentFrame) {
         if (currentFrame != null) currentFrame.dispose();
         new WelcomeView();
@@ -65,5 +65,11 @@ public class NavigationController {
     public void openMyRequestView(JFrame currentFrame, BloodRequest request) {
         if (currentFrame != null) currentFrame.dispose();
         new MyRequestView(request);
+    }
+
+    // Opens Hospital/Admin Management Dashboard screen
+    public void openManageInventoryView(JFrame currentFrame) {
+        if (currentFrame != null) currentFrame.dispose();
+        new ManageInventoryView();
     }
 }

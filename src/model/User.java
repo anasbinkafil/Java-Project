@@ -10,14 +10,20 @@ public class User {
     private String bloodGroup;
     private String username;
     private String password;
+    private String role; // "USER" or "ADMIN"
 
     public User(String fullName, String email, String phone, String bloodGroup, String username, String password) {
+        this(fullName, email, phone, bloodGroup, username, password, "USER");
+    }
+
+    public User(String fullName, String email, String phone, String bloodGroup, String username, String password, String role) {
         this.fullName = fullName;
         this.email = email;
         this.phone = phone;
         this.bloodGroup = bloodGroup;
         this.username = username;
         this.password = password;
+        this.role = (role == null || role.isEmpty()) ? "USER" : role;
     }
 
     public String getFullName() {
@@ -66,5 +72,17 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    public boolean isAdmin() {
+        return "ADMIN".equalsIgnoreCase(role);
     }
 }
