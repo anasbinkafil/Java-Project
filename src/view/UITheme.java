@@ -10,9 +10,10 @@ import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
 
 /**
- * Enhanced UI Theme & Component Styling for Swing GUI.
+ * Enhanced UI Theme & Component Styling for Swing GUI with safe image & resource loading.
  */
 public class UITheme {
 
@@ -43,6 +44,21 @@ public class UITheme {
 
     public static void applyWindowStyle(JFrame frame) {
         frame.getContentPane().setBackground(WINDOW_BG);
+    }
+
+    // Safe image scaling helper with zero runtime exception
+    public static ImageIcon getScaledIcon(String imagePath, int width, int height) {
+        try {
+            File imgFile = new File(imagePath);
+            if (imgFile.exists()) {
+                ImageIcon icon = new ImageIcon(imagePath);
+                Image img = icon.getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH);
+                return new ImageIcon(img);
+            }
+        } catch (Exception e) {
+            System.err.println("Image loading warning: " + e.getMessage());
+        }
+        return null;
     }
 
     // Top Header Navigation Bar
